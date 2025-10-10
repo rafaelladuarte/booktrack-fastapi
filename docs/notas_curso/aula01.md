@@ -8,7 +8,7 @@
 * Comando executar a aplicação fora do ambiente virtual:
 
 ```
-poetry run fastapi dev fast_zero/app.py
+$ poetry run fastapi dev fast_zero/app.py
 ```
 
 * Quando executar o comando a mensagem de resposta do CLI: 
@@ -22,7 +22,7 @@ poetry run fastapi dev fast_zero/app.py
 * Comando executar a aplicação direto pelo Uvicorn:
 
 ```
-uvicorn fast_zero.app:app
+$ uvicorn fast_zero.app:app
 ```
 
 * [Ruff](https://docs.astral.sh/ruff/) = Linter (analisador estático de código) + Formatter (formatador de código PEP8)
@@ -33,25 +33,25 @@ uvicorn fast_zero.app:app
 * Para testar o arquivo app da api que foi definido no arquivo pyproject.toml, execute o comando:
 
 ```
-task lint
+$ task lint
 ```
 
 * E para corrigir a formatação do arquivo, execute o comando:
 
 ```
-task format
+$ task format
 ```
 
 * Para executar os testes da pasta tests, execute o comando:
 
 ```
-task test
+$ task test
 ```
 
 * Quando executamos o comando abaixo, ele gera um relatorio dos testes em formato HTML, que pode ser aberto no navegador (funcionalidade definida no arquivo pyproject.toml)
 
 ```
-task post_test
+$ task post_test
 ```
 
 * A estrutura dos teste do curso é desenvolvida pelo método [AAA](https://xp123.com/3a-arrange-act-assert/) que divide o teste em três fases distintas:
@@ -61,6 +61,115 @@ task post_test
 
 ### Aprofundamento nos estudos
 
-* [Uma introdução aos testes: Como fazer? | Live de Python #232](youtube.com/watch?v=-8H2Pyxnoek&feature=youtu.be)
+* [Uma introdução aos testes: Como fazer? | Live de Python #232](https://www.youtube.com/live/-8H2Pyxnoek?si=pgkS1z5YXmw6IXLu)
 * [Pytest: Uma introdução - Live de Python #167](https://www.youtube.com/watch?v=MjQCvJmc31A)
 * [Pytest Fixtures - Live de Python #168](youtube.com/watch?v=sidi9Z_IkLU&feature=youtu.be)
+
+## Extra - Live de Python #232
+
+### Como um programa funciona?
+
+* A estrutura basica de um programa:
+
+```mermaid
+flowchart LR
+A[input] --> B[APP] --> C[output]
+```
+
+### O que são testes?
+
+* Testes basicamente são um tipo de ciclos de feedback, com uma garantia de o programa funciona.
+
+```mermaid
+
+flowchart LR
+A[input]
+B[APP]
+C[output]
+
+D[eu/voce]
+
+A --> B
+B --> C
+C --> |verifica o resultado| D
+D --> |executa o codigo|A 
+```
+
+### Isolando as coisas.
+
+* Podemos isolar as coisas por meio de funções, em pequenos blocos isolados, que podem ser chamados de forma independentes.
+* Outra forma de isolar o fluxo de execução é:
+
+```ptyhon
+if __name__ == '__main__':
+    print("Codigo sendo executado por ele mesmo")
+```
+
+* A ideia é segmentar as preocupações, isolar do fluxo de execução.
+
+
+```mermaid
+
+flowchart LR
+A[input]
+B[APP]
+C[output]
+
+D[eu/voce]
+F[funcao]
+
+B <--> F
+
+A --> B
+B --> C
+C --> D
+D --> A 
+```
+
+* Um mock é um dublê, ele finge ser uma coisa, podemos mocar um teste (live de python ##22).
+* Teste de caixa preta (opaco) é um teste que não conhecemos os sistema. Um teste unitário é um teste opoco.
+* Dunder = abreviação de double underscore
+* Modelo de estrutura de teste AAA
+
+```mermaid
+
+flowchart LR
+A[arranjo]
+B[acao]
+C[afirmacao]
+
+A --> B --> C
+```
+* Uma forma de executar teste é com o [doctest](https://docs.python.org/pt-br/3.13/library/doctest.html), que é um módulo (comando -m) Python que permite incorporar testes diretamente nas docstrings do seu código.
+
+Exemplo de docstring:
+```
+"""
+Testes:
+
+>>> funcao(valor)
+resultado
+
+>>> funcao(valor2)
+resultado2
+"""
+```
+Comando de teste:
+```
+$ python -m doctest app.py
+```
+
+* Todos os tipos do python são interoperáveis entre si, isso quer dizer que no caso dos números: 40 == 40.0 == 40 + 0j
+
+### Frameworks
+
+* [unittest](https://docs.python.org/3/library/unittest.html)
+
+Framework para teste nativo do python
+
+Comando de teste:
+```
+$ python -m unittest app.py
+```
+
+* pytest
