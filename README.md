@@ -67,7 +67,7 @@ Essa modelagem facilita análises de leitura por tempo, gênero, origem e format
 
 ## 🛠️ Ferramentas e Tecnologias
 
-- **Linguagem:** Python 3.12+
+- **Linguagem:** Python 3.13+
 - **Framework:** FastAPI
 - **ORM:** SQLAlchemy
 - **Banco de Dados:** PostgreSQL (Neon)
@@ -142,15 +142,4 @@ Consolidar conhecimentos em:
 **Rafaella Duarte**
 [GitHub](https://github.com/rafaelladuarte) • [LinkedIn](https://linkedin.com/in/rafaelladuarte)
 
----
 
-> *"Build systems that tell stories — each dataset is a bookshelf waiting to be explored."* ✨
-
-```
-
----
-
-Se quiser, posso gerar a **versão com emojis e ícones otimizados para README do GitHub (com links clicáveis, seções recolhíveis e badges de status)** — ideal para deixar o repositório mais chamativo visualmente.  
-
-Quer que eu monte essa **versão aprimorada visualmente** do README?
-```
