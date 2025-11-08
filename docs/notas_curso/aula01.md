@@ -54,6 +54,8 @@ $ task test
 $ task post_test
 ```
 
+![alt text](../images/image.png)
+
 * A estrutura dos teste do curso é desenvolvida pelo método [AAA](https://xp123.com/3a-arrange-act-assert/) que divide o teste em três fases distintas:
     * Arrange: fase em que monta o ambiente para o teste poder ser executado.
     * Act: fase em que o código de testes executa o código de produção que está sendo testado.
