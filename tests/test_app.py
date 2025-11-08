@@ -1,5 +1,7 @@
-from http import HTTPStatus  
+from http import HTTPStatus
+
 from fastapi.testclient import TestClient
+
 from booktrack_fastapi.app import app
 
 
