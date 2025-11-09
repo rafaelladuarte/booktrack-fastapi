@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = {extras = ["standard"], version = "^0.121.0"}
+sqlalchemy = "^2.0.44"
 
 [dependency-groups]
 dev = [
@@ -37,7 +38,7 @@ addopts = '-p no:warnings'
 lint = 'ruff check'
 pre_format = 'ruff check --fix'
 format = 'ruff format'
-run = 'fastapi dev booktrack_fastapi/app.py'
+run = 'fastapi dev booktrack_fastapi/main.py'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=booktrack_fastapi -vv'
 post_test = 'coverage html'
