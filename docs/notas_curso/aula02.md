@@ -6,17 +6,17 @@
 
 O FastAPI é um framework para desenvolvimento de aplicações web, ou seja, uma aplicação que funciona em rede, seja ela privada, doméstica, empresarial ou a internet. Em uma aplicação web, a comunicação em rede bidirecional denominada modelo cliente-servidor.
 
-![alt text](image.png)
+![alt text](../images/image-0.png)
 
 ### Modelo Padrão Web
 
-![alt text](image-1.png)
+![alt text](../images/image-1.png)
 
 #### URL
 
-![alt text](image-2.png)
+![alt text](../images/image-2.png)
 
-![alt text](image-3.png)
+![alt text](../images/image-3.png)
 
 #### HTTP
 
