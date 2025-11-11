@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Mapped, registry, mapped_column
-from sqlalchemy import func
 from datetime import datetime
+
+from sqlalchemy import func
+from sqlalchemy.orm import Mapped, mapped_column, registry
 
 table_registry = registry()
 
@@ -18,5 +19,5 @@ class User:
     password: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(
         init=False,
-        server_default=func.now() # coleta o horario corrente do banco de dados
+        server_default=func.now()
     )

@@ -69,7 +69,6 @@ def delete_user(user_id: int):
     return {'message': 'User deleted'}
 
 
-
 @app.get('/users/{user_id}', response_model=UserPublic)
 def read_user__exercicio(user_id: int):
     if user_id > len(database) or user_id < 1:

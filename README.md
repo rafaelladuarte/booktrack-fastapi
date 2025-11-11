@@ -1,5 +1,5 @@
 
-# BookTrack API – Seu Skoob Pessoal com Análises Literárias
+# BookTrack API – Gerenciamento de Livros com FastAPI 
 
 
 [![Python](https://img.shields.io/badge/Python-3.13-yellow?logo=python&logoColor=white)](https://www.python.org/)
