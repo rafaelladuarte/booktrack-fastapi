@@ -3,7 +3,7 @@ from http import HTTPStatus
 import pytest
 from fastapi.testclient import TestClient
 
-from booktrack_fastapi.main import app
+from booktrack_fastapi.example_main import app
 
 
 @pytest.fixture
@@ -43,8 +43,8 @@ def test_create_user(client):
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == {
         'email': 'alice@example.com',
-        "id": 1,
-        'username': 'alice'
+        'id': 1,
+        'username': 'alice',
     }
 
 
