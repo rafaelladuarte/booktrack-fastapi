@@ -14,17 +14,17 @@ A partir do projeto final apresentado no curso, o **MADR (Meu Acervo de Romancis
 Perfeito 👍 Aqui está a **versão condensada da tabela comparativa**, mostrando apenas as colunas: **Categoria**, **Projeto MADR**, e **Proposta Simplificada (BookTrack API)** — ideal para documentação técnica mais direta 👇
 
 
-| Categoria                     | Projeto MADR (antigo)                       | ✅ **Proposta Simplificada (BookTrack API)**                            |
-| ----------------------------- | ------------------------------------------- | ---------------------------------------------------------------------- |
-| **Autenticação**   | `/conta`, `/token`, `/refresh-token`, `/me` | `/token`, `/refresh-token`,                        |
-| **Usuário**            | `/conta` ,`/me`                               | `/conta`                                            |
-| **Propriedades**                   | `/romancistas`                        | `/propriedades` , `/propriedades/{name}`                                          |       
-| **Categorias**                   |   —                       | `/categoria/{parent_id}`                                             |                                     
-| **Livros**        | `/livros`                           | `/livros`,  `/livros/{id}`, `/livros/public` |
-| **Leituras**        | `/biblioteca`                               | `/leituras`, `/leituras/{id}`                                                    |
-| **Recomendações (IA/Markov)** | —                                           | `/recommendations`                                              |
-| **Relatórios / Estatísticas** | `/relatorios`                               | `/analise`                                                      |
-| **Upload** | —                               | `/livros/upload-csv`| 
+| **Category**                    | **MADR Project (old)**                      | ✅ **Simplified Proposal (BookTrack API)** |
+| ------------------------------- | ------------------------------------------- | ----------------------------------------- |
+| **Authentication**              | `/conta`, `/token`, `/refresh-token`, `/me` | `/token`, `/refresh-token`                |
+| **User**                        | —                                           | `/account`, `/me`                         |
+| **Properties**                  | `/romancistas`                              | `/properties`, `/properties/{name}`       |
+| **Categories**                  | —                                           | `/categories/{parent_id}`                 |
+| **Books**                       | `/livros`                                   | `/books`, `/books/{id}`, `/books/public`  |
+| **Readings**                    | `/biblioteca`                               | `/readings`, `/readings/{id}`             |
+| **Recommendations (AI/Markov)** | —                                           | `/recommendations`                        |
+| **Reports / Analytics**         | `/relatorios`                               | `/analytics`                              |
+| **Upload**                      | —                                           | `/books/upload-csv`                       |
 ---
 
 

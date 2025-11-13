@@ -2,31 +2,31 @@ from http import HTTPStatus
 
 from fastapi import APIRouter
 
-from booktrack_fastapi.schemas.properties import Property, PropertyType
+from booktrack_fastapi.schemas.properties import (
+    Property,
+    PropertyCreate,
+    PropertyList,
+    PropertyType,
+    PropertyTypeCreate,
+)
 
-router = APIRouter(prefix='/properties', tags=['properties'])
+router = APIRouter(prefix='/properties', tags=['Properties'])
+
+
+@router.get('/', response_model=PropertyType, status_code=HTTPStatus.OK)
+def list_properties():
+    return PropertyType
 
 
 @router.get(
-    '/{type}', response_model=list[Property], status_code=HTTPStatus.OK
+    '/{type}', response_model=PropertyList, status_code=HTTPStatus.OK
 )
-def list_properties(type: PropertyType):
-    if type == PropertyType.editoras:
-        return [{'id': 1, 'nome': 'Editora'}]
-    elif type == PropertyType.formatos:
-        return [{'id': 1, 'nome': 'Formato'}]
-    elif type == PropertyType.status_leitura:
-        return [{'id': 1, 'nome': 'Status Leitura'}]
-    elif type == PropertyType.etiquetas:
-        return [{'id': 1, 'nome': 'Etiquetas'}]
-    elif type == PropertyType.colecoes:
-        return [{'id': 1, 'nome': 'Coleções'}]
-    elif type == PropertyType.estantes:
-        return [{'id': 1, 'nome': 'Estantes'}]
+def list_properties_by_type(type: str):
+    return {'id': 1, 'name': type}
 
 
-@router.post('/{type}', response_model=Property)
-def create_properties(
-    type: PropertyType, properties: Property, status_code=HTTPStatus.CREATED
-):
-    return [{'id': 1, 'nome': properties.name}]
+@router.post(
+    '/{type}', response_model=PropertyCreate, status_code=HTTPStatus.CREATED
+)
+def create_property(type: PropertyTypeCreate, property: Property):
+    return {'name': property.name}

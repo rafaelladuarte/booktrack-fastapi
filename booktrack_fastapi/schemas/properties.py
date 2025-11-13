@@ -1,17 +1,31 @@
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PropertyType(str, Enum):
-    editoras = 'editoras'
-    formatos = 'formatos'
-    colecoes = 'colecoes'
-    status_leitura = 'status_leitura'
-    etiquetas = 'etiquetas'
-    estantes = 'estantes'
+    publishers = 'publishers'
+    formats = 'formats'
+    collections = 'collections'
+    reading_status = 'reading_status'
+    tags = 'tags'
+    shelves = 'shelves'
 
 
 class Property(BaseModel):
     id: int
-    nome: str
+    name: str
+
+
+class PropertyList(BaseModel):
+    properties: list[Property]
+
+
+class PropertyTypeCreate(str, Enum):
+    publishers = 'publishers'
+    collections = 'collections'
+    tags = 'tags'
+
+
+class PropertyCreate(BaseModel):
+    name: str = Field(..., example='Sci-fi')

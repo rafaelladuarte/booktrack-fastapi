@@ -24,109 +24,122 @@ Além de servir como ferramenta pessoal, o projeto oferece uma **view pública l
 A modelagem segue o padrão **Star Schema**, integrando conceitos de **engenharia de dados** e **boas práticas de APIs REST**. Este projeto foi idealizado como um estudo prático de **POO em Python**, **FastAPI**, **modelagem de dados** e **deploy em nuvem**.
 
 
+## Checklist de Desenvolvimento da API BookTrack
+
+- [x] Planejar funcionalidades
+- [x] Criar diagrama ER
+- [ ] Implementar models SQLModel
+- [ ] Criar rotas CRUD de Livros
+- [ ] Escrever testes
+- [ ] Configurar deploy no Render
+
+
 ## Diagrama ER – Modelo Estrela
 ```mermaid
 erDiagram
-    %% ========== 1. DIMENSÕES BÁSICAS ==========
-    AUTORES {
+    %% ========== 1. BASIC DIMENSIONS ==========
+    AUTHORS {
         int id PK
-        varchar nome
-        varchar genero "M/F"
-        varchar pais_origem
+        varchar name
+        varchar gender "M/F"
+        varchar country_of_origin
     }
 
-    EDITORAS {
+    PUBLISHERS {
         int id PK
-        varchar nome UK
+        varchar name UK
     }
 
-    COLECOES {
+    COLLECTIONS {
         int id PK
-        varchar nome
+        varchar name
     }
 
-    ESTANTES {
+    SHELVES {
         int id PK
-        varchar nome UK
+        varchar name UK
     }
 
-    FORMATOS {
+    FORMATS {
         int id PK
-        varchar nome UK
+        varchar name UK
     }
 
-    STATUS_LEITURA {
+    READING_STATUS {
         int id PK
-        varchar nome UK
+        varchar name UK
     }
 
-    ETIQUETAS {
+    TAGS {
         int id PK
-        varchar nome UK
+        varchar name UK
     }
 
-    %% ========== 2. CATEGORIAS HIERÁRQUICAS ==========
-    CATEGORIAS {
+    %% ========== 2. HIERARCHICAL CATEGORIES ==========
+    CATEGORIES {
         int id PK
-        varchar nome
-        int pai_id FK "NULL = categoria raiz"
+        varchar name
+        int parent_id FK "NULL = root category"
     }
 
-    %% ========== 3. LIVRO (com TODOS os campos corretos) ==========
-    LIVROS {
+    %% ========== 3. BOOKS ==========
+    BOOKS {
         int id PK
-        varchar titulo
-        int ano_publicacao_original
-        int total_paginas
-        text capa_url
-        int editora_id FK
-        int colecao_id FK
-        int formato_id FK
+        int publisher_id FK
+        int collection_id FK
+        int format_id FK
+        int category_id FK 
+        int authors FK
+        varchar title
+        int original_publication_year
+        int total_pages
+        text cover_url
+        
     }
 
-    %% ========== 5. LEITURAS ==========
-    LEITURAS {
+    %% ========== 5. READINGS ==========
+    READINGS {
         int id PK
-        int livro_id FK
+        int book_id FK
         int status_id FK
-        date data_inicio
-        date data_fim
-        int paginas_lidas
-        varchar meta_pessoal
-        date data_clube
-        varchar clube_nome
-        timestamp criado_em
-        timestamp atualizado_em
+        date start_date
+        date end_date
+        int pages_read
+        varchar personal_goal
+        date club_date
+        varchar club_name
+        timestamp created_at
+        timestamp updated_at
     }
 
-    %% ========== RELACIONAMENTOS ==========
-    %% Livro → Editoras (1:N)
-    EDITORAS ||--o{ LIVROS : "publica"
+    %% ========== RELATIONSHIPS ==========
+    %% Book → Publishers (1:N)
+    PUBLISHERS ||--o{ BOOKS : "publishes"
 
-    %% Livro → Coleções (1:N)
-    COLECOES ||--o{ LIVROS : "contém"
+    %% Book → Collections (1:N)
+    COLLECTIONS ||--o{ BOOKS : "contains"
 
-    %% Livro → Formatos (1:N)
-    FORMATOS ||--o{ LIVROS : "possui"
+    %% Book → Formats (1:N)
+    FORMATS ||--o{ BOOKS : "has"
 
-    %% Livro → Autores (N:N)
-    LIVROS }o--o{ AUTORES : "escrito por"
+    %% Book → Authors (N:N)
+    BOOKS }o--o{ AUTHORS : "written by"
 
-    %% Livro → Categorias (N:N)
-    LIVROS }o--o{ CATEGORIAS : "classificado em"
+    %% Book → Categories (N:N)
+    BOOKS }o--o{ CATEGORIES : "classified as"
 
-    %% Categorias hierárquicas (auto-relacionamento)
-    CATEGORIAS }o--o{ CATEGORIAS : "subcategoria de"
+    %% Category → Category (self-relationship)
+    CATEGORIES }o--o{ CATEGORIES : "sub-category of"
 
-    %% Leitura → Livro (N:1)
-    LIVROS ||--o{ LEITURAS : "possui leituras"
+    %% Reading → Book (N:1)
+    BOOKS ||--o{ READINGS : "has readings"
 
-    %% Leitura → Status (N:1)
-    STATUS_LEITURA ||--o{ LEITURAS : "define"
+    %% Reading → ReadingStatus (N:1)
+    READING_STATUS ||--o{ READINGS : "defines"
 
-    %% Leitura → Etiquetas (N:N)
-    LEITURAS }o--o{ ETIQUETAS : "tem"
+    %% Reading → Tags (N:N)
+    READINGS }o--o{ TAGS : "tagged with"
 
-    %% Leitura → Estantes (N:N)
-    LEITURAS }o--o{ ESTANTES : "está em"
+    %% Reading → Shelves (N:N)
+    READINGS }o--o{ SHELVES : "stored in"
 ```
