@@ -28,4 +28,4 @@ class PropertyTypeCreate(str, Enum):
 
 
 class PropertyCreate(BaseModel):
-    name: str = Field(..., example='Sci-fi')
+    name: str

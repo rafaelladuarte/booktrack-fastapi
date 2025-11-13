@@ -17,7 +17,7 @@
 
 - [X] Criar o **diagrama ER** (entidades, chaves, relacionamentos)
 - [X] Definir as **entidades principais**
-- [ ] Criar os **schemas Pydantic** (entrada/saída da API)
+- [X] Criar os **schemas Pydantic** (entrada/saída da API)
 - [X] Esboçar a **estrutura de diretórios**
 - [X] Definir um **padrão de nomenclatura**
 - [ ] Planejar a **autenticação**
@@ -26,7 +26,7 @@
 
 **Objetivo:** desenvolver as funcionalidades com boas práticas.
 
-* [ ] Criar os **modelos de banco** (SQLModel / SQLAlchemy)
+* [X] Criar os **modelos de banco** (SQLAlchemy)
 * [ ] Configurar o **banco e migrations** (Alembic)
 * [ ] Criar as **rotas básicas**
 * [ ] Implementar **validações** nos schemas

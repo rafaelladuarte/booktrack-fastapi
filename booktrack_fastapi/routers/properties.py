@@ -13,20 +13,20 @@ from booktrack_fastapi.schemas.properties import (
 router = APIRouter(prefix='/properties', tags=['Properties'])
 
 
-@router.get('/', response_model=PropertyType, status_code=HTTPStatus.OK)
+@router.get('/', response_model=PropertyList, status_code=HTTPStatus.OK)
 def list_properties():
-    return PropertyType
+    return None
 
 
 @router.get(
     '/{type}', response_model=PropertyList, status_code=HTTPStatus.OK
 )
 def list_properties_by_type(type: str):
-    return {'id': 1, 'name': type}
+    return None
 
 
 @router.post(
     '/{type}', response_model=PropertyCreate, status_code=HTTPStatus.CREATED
 )
 def create_property(type: PropertyTypeCreate, property: Property):
-    return {'name': property.name}
+    return None

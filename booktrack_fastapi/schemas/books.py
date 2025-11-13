@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class BookSchema(BaseModel):
+class Book(BaseModel):
     id: int
     title: str
     original_publication_year: int
@@ -16,7 +16,7 @@ class BookSchema(BaseModel):
 
 
 class BookList(BaseModel):
-    books: list[BookSchema]
+    books: list[Book]
 
 
 class BookQuery(BaseModel):

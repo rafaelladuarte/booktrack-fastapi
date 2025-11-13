@@ -1,23 +1,20 @@
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.orm import Mapped, mapped_column, registry, relationship
 
-from booktrack_fastapi.models.books import Books
-
-table_registry_categories = registry()
+from . import Base
 
 books_categories = Table(
     'books_categories',
-    table_registry_categories.metadata,
+    Base.metadata,
     Column('book_id', ForeignKey('books.id'), primary_key=True),
     Column('category_id', ForeignKey('categories.id'), primary_key=True),
 )
 
 
-@table_registry_categories.mapped_as_dataclass
-class Categories:
+class Categories(Base):
     __tablename__ = 'categories'
 
-    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     parent_id: Mapped[int | None] = mapped_column(ForeignKey('categories.id'))
 

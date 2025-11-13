@@ -28,7 +28,7 @@ A modelagem segue o padrão **Star Schema**, integrando conceitos de **engenhari
 
 - [x] Planejar funcionalidades
 - [x] Criar diagrama ER
-- [ ] Implementar models SQLModel
+- [ ] Implementar models SQLAlchemy
 - [ ] Criar rotas CRUD de Livros
 - [ ] Escrever testes
 - [ ] Configurar deploy no Render
@@ -108,8 +108,6 @@ erDiagram
         varchar personal_goal
         date club_date
         varchar club_name
-        timestamp created_at
-        timestamp updated_at
     }
 
     %% ========== RELATIONSHIPS ==========

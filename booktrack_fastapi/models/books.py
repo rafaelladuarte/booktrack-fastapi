@@ -1,23 +1,13 @@
 from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, registry, relationship
 
-from booktrack_fastapi.models.authors import Authors
-from booktrack_fastapi.models.categories import Categories
-from booktrack_fastapi.models.properties import (
-    Collections,
-    Formats,
-    Publishers,
-)
-from booktrack_fastapi.models.reading import Readings
-
-table_registry_books = registry()
+from . import Base
 
 
-@table_registry_books.mapped_as_dataclass
-class Books:
+class Books(Base):
     __tablename__ = 'books'
 
-    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
     original_publication_year: Mapped[int | None]
     total_pages: Mapped[int | None]
