@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict
 
 
 class PropertyType(str, Enum):
@@ -16,9 +16,11 @@ class Property(BaseModel):
     id: int
     name: str
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class PropertyList(BaseModel):
-    properties: list[Property]
+    data: list[Property]
 
 
 class PropertyTypeCreate(str, Enum):

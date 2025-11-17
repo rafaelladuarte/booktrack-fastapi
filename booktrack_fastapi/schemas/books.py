@@ -16,7 +16,7 @@ class Book(BaseModel):
 
 
 class BookList(BaseModel):
-    books: list[Book]
+    data: list[Book]
 
 
 class BookQuery(BaseModel):

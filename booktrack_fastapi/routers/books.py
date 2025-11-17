@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
 
-from booktrack_fastapi.schemas.books import BookList, BookQuery, Book
+from booktrack_fastapi.schemas.books import Book, BookList, BookQuery
 
 router = APIRouter(prefix='/books', tags=['Books'])
 
@@ -27,9 +27,7 @@ def create_book():
     return None
 
 
-@router.put(
-    '/{book_id}', response_model=Book, status_code=HTTPStatus.CREATED
-)
+@router.put('/{book_id}', response_model=Book, status_code=HTTPStatus.CREATED)
 def update_book(book_id: int):
     return None
 

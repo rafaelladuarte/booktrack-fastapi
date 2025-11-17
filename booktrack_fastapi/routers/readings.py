@@ -2,7 +2,10 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
 
-from booktrack_fastapi.schemas.readings import Reading, ReadingList, ReadingQuery
+from booktrack_fastapi.schemas.readings import (
+    ReadingList,
+    ReadingQuery,
+)
 
 router = APIRouter(prefix='/readings', tags=['Readings'])
 

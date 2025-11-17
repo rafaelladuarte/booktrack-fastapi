@@ -19,7 +19,7 @@ class Reading(BaseModel):
 
 
 class ReadingList(BaseModel):
-    reading: list[Reading]
+    data: list[Reading]
 
 
 class ReadingQuery(BaseModel):
@@ -29,4 +29,3 @@ class ReadingQuery(BaseModel):
     club_name: Optional[str] = Field(
         None, description='Filtrar pelo nome do Clube do Livro'
     )
-

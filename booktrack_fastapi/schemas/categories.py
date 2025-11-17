@@ -10,7 +10,7 @@ class Category(BaseModel):
 
 
 class CategoriesList(BaseModel):
-    categories: list[Category]
+    data: list[Category]
 
 
 class CategoryCreate(BaseModel):
