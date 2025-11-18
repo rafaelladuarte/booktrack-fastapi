@@ -21,6 +21,8 @@ class Books(Base):
         ForeignKey('collections.id')
     )
     format_id: Mapped[int | None] = mapped_column(ForeignKey('formats.id'))
+    category_id: Mapped[int | None] = mapped_column(ForeignKey('categories.id'))
+    author_id: Mapped[int | None] = mapped_column(ForeignKey('authors.id'))
 
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     original_publication_year: Mapped[int | None]

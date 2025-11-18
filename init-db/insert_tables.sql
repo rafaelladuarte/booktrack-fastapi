@@ -1,107 +1,94 @@
--- 1. AUTORES (5)
-INSERT INTO autores (nome, genero, pais_origem) VALUES
-('Clarice Lispector', 'F', 'Ucrânia'),
-('George Orwell', 'M', 'Reino Unido'),
-('J.K. Rowling', 'F', 'Reino Unido'),
-('Yuval Noah Harari', 'M', 'Israel'),
-('Agatha Christie', 'F', 'Reino Unido');
-
--- 2. EDITORAS (4)
-INSERT INTO editoras (nome) VALUES
-('Rocco'),
-('Companhia das Letras'),
-('Intrínseca'),
-('HarperCollins Brasil');
-
--- 3. COLEÇÕES (4)
-INSERT INTO colecoes (nome) VALUES
-('Harry Potter'),
-('As Crônicas de Gelo e Fogo'),
-('Duna'),
-('O Senhor dos Anéis');
-
--- 4. FORMATOS (5)
-INSERT INTO formatos (nome) VALUES
-('Físico'),
-('eBook'),
-('Audiolivro');
-
--- 5. STATUS DE LEITURA (5)
-INSERT INTO status_leitura (nome) VALUES
-('Lendo'),
-('Concluído'),
-('Abandonado'),
-('Quero Ler'),
-('Pausado');
-
--- 6. ESTANTES (5)
-INSERT INTO estantes (nome) VALUES
-('Livro'),
-('Revistas')
-('Artigos');
+INSERT INTO authors (id, name, gender, country_of_origin) VALUES
+(1, 'Haruki Murakami', 'M', 'Japan'),
+(2, 'Agatha Christie', 'F', 'United Kingdom'),
+(3, 'George Orwell', 'M', 'United Kingdom'),
+(4, 'Clarice Lispector', 'F', 'Brazil');
 
 
--- 7. ETIQUETAS (5)
-INSERT INTO etiquetas (nome) VALUES
-('Tenho'),
-('Não Tenho'),
-('Emprestado');
+INSERT INTO publishers (id, name) VALUES
+(1, 'Penguin Books'),
+(2, 'HarperCollins'),
+(3, 'Companhia das Letras');
 
 
--- 8. CATEGORIAS
-INSERT INTO categorias (nome, pai_id) VALUES
--- Raiz
-('Ficção', NULL),
-('Não-Ficção', NULL),
+INSERT INTO collections (id, name) VALUES
+(1, 'Modern Classics'),
+(2, 'Mystery Series'),
+(3, 'Literatura Brasileira');
 
--- Nível 1
-('Distopia', 1),
-('Fantasia', 1),
-('História', 2),
 
--- Nível 2
-('Cyberpunk', 3),
-('Grimdark', 4);
+INSERT INTO shelves (id, name) VALUES
+(1, 'Livros'),
+(2, 'Revistas'),
+(3, 'Artigos');
 
--- 9. LIVROS (5)
-INSERT INTO livros (titulo, ano_publicacao_original, total_paginas, capa_url, editora_id, colecao_id, formato_id) VALUES
-('1984', 1949, 336, 'https://example.com/1984.jpg', 2, NULL, 2),
-('Harry Potter e a Pedra Filosofal',  1997, 320, 'https://example.com/hp1.jpg', 1, 1, 1),
-('Sapiens',  2015, 448, 'https://example.com/sapiens.jpg', 2, NULL, 3),
-('Neuromancer',  1984, 368, 'https://example.com/neuromancer.jpg', 1, NULL, 2),
-('O Hobbit',  1937, 312, 'https://example.com/hobbit.jpg', 4, 4, 1);
 
--- 10. LIVROS x AUTORES
-INSERT INTO livros_autores (livro_id, autor_id) VALUES
-(1,2),  -- 1984 → Orwell
-(2,3),  -- Harry Potter → Rowling
-(3,4);  -- Sapiens → Harari
+INSERT INTO formats (id, name) VALUES
+(1, 'Físico'),
+(2, 'E-book');
 
--- 11. LIVROS x CATEGORIAS
-INSERT INTO livros_categorias (livro_id, categoria_id) VALUES
-(1, 3), (1, 6),           -- 1984 = Distopia + Cyberpunk
-(2, 4), (2, 7),           -- Harry Potter = Fantasia + Grimdark
-(3, 5),                   -- Sapiens = História
-(4, 3), (4, 6),   		  -- Neuromancer = Distopia + Cyberpunk
-(5, 4);                   -- O Hobbit = Fantasia
 
--- 12. LEITURAS (5)
-INSERT INTO leituras (livro_id, status_id, data_inicio, data_fim, paginas_lidas, meta_pessoal, data_clube, clube_nome) VALUES
-(1, 2, '2025-01-10', '2025-01-15', 336, 'Terminar antes do clube', '2025-01-20', 'Clube Distopia'),
-(2, 1, '2025-03-01', NULL, 150, 'Ler 1 capítulo por dia', NULL, NULL),
-(3, 2, '2025-02-05', '2025-02-28', 448, 'Entender história humana', NULL, NULL),
-(4, 4, NULL, NULL, 0, 'Comprar edição física primeiro', '2025-06-10', 'Clube Cyberpunk'),
-(5, 1, '2025-04-01', NULL, 80, 'Ler antes de dormir', NULL, NULL);
+INSERT INTO reading_status (id, name) VALUES
+(1, 'Lendo'),
+(2, 'Concluído'),
+(3, 'Abandonado');
 
--- 13. LEITURAS x ETIQUETAS
-INSERT INTO leituras_etiquetas (leitura_id, etiqueta_id) VALUES
-(1,1), (1,3),  -- 1984: tenho + emprestado
-(2,2);         -- Harry Potter: não tenho
 
--- 14. LEITURAS x ESTANTES
-INSERT INTO leituras_estantes (leitura_id, estante_id) VALUES
-(1,1),  -- 1984 → Livros
-(2,1),  -- Harry Potter → Livros
-(3,3),  -- Sapiens → Artigos
-(4,2),  -- Neuromancer → Revistas
-(5,1);  -- O Hobbit → Livros
+INSERT INTO tags (id, name) VALUES
+(1, 'Tenho'),
+(2, 'Não Tendo');
+
+
+INSERT INTO categories (id, name, parent_id) VALUES
+(1, 'Ficção', NULL),
+(2, 'Não-ficção', NULL),
+(3, 'Fantasia', 1),
+(4, 'Mistério', 1),
+(5, 'Romance', 1),
+(6, 'Distopia', 1),
+(7, 'Biografia', 2);
+
+
+INSERT INTO books (id, publisher_id, collection_id, format_id, category_id, author, title, 
+                   original_publication_year, total_pages, cover_url)
+VALUES
+(1, 1, 1, 1, 6, 3, '1984', 1949, 328, 'https://covers.example.com/1984.jpg'),
+(2, 1, 1, 1, 4, 2, 'Murder on the Orient Express', 1934, 256, 'https://covers.example.com/orient.jpg'),
+(3, 3, 3, 1, 5, 4, 'A Hora da Estrela', 1977, 96, 'https://covers.example.com/hora.jpg'),
+(4, 1, 1, 2, 5, 1, 'Norwegian Wood', 1987, 296, 'https://covers.example.com/wood.jpg');
+
+
+INSERT INTO books_authors (book_id, author_id) VALUES
+(1, 3),
+(2, 2),
+(3, 4),
+(4, 1);
+
+
+INSERT INTO books_categories (book_id, category_id) VALUES
+(1, 6),  -- 1984 → Distopia
+(2, 4),  -- Agatha → Mistério
+(3, 5),  -- Clarice → Romance
+(4, 5);  -- Murakami → Romance
+
+
+INSERT INTO readings (id, book_id, status_id, start_date, end_date, pages_read,
+                      personal_goal, club_date, club_name)
+VALUES
+(1, 1, 2, '2024-01-01', '2024-01-10', 328, NULL, NULL, NULL),
+(2, 2, 1, '2024-03-05', NULL, 100, 'Ler até o fim do mês', NULL, NULL),
+(3, 4, 2, '2023-11-01', '2023-11-20', 296, NULL, '2023-12-01', 'Clube do Livro XPTO');
+
+
+INSERT INTO readings_tags (reading_id, tag_id) VALUES
+(1, 1),  -- Distopia
+(1, 4),  -- Clássico
+(2, 2),  -- Suspense
+(3, 3);  -- Reflexivo
+
+
+INSERT INTO readings_shelves (reading_id, shelf_id) VALUES
+(1, 1),  -- Lidos
+(2, 3),  -- Favoritos (em leitura)
+(3, 1),  -- Lidos
+(3, 3);  -- Favoritos

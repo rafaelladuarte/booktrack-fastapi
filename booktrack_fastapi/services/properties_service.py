@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 
@@ -11,13 +12,17 @@ class PropertiesService:
         name = name.strip()
 
         if len(name) < lenght:
-            raise ValueError(
-                f'O nome deve ter pelo menos {lenght} caracteres.'
+            raise HTTPException(
+                status_code=422,
+                detail=f"O nome deve ter pelo menos {lenght} caracteres."
             )
 
         existing = self.repo.get_by_name(name)
         if existing:
-            raise ValueError(f"{self.model.__name__} '{name}' já existe.")
+            raise HTTPException(
+                status_code=409,
+                detail=f"{self.model.__name__} '{name}' já existe."
+            )
 
         return self.repo.create(name)
 
@@ -26,10 +31,13 @@ class PropertiesService:
 
     def get_by_id(self, propertie_id: int):
         obj = self.repo.get_by_id(propertie_id)
+
         if not obj:
-            raise ValueError(
-                f'{self.model.__name__} id={propertie_id} não encontrado.'
+            raise HTTPException(
+                status_code=404,
+                detail=f"{self.model.__name__} id={propertie_id} não encontrado."
             )
+
         return obj
 
     def list_by_filter(self, **filters):

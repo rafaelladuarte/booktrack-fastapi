@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class Category(BaseModel):
     id: int
     name: str
-    parent_id: int
+    parent_id: Optional[int] = None
 
 
 class CategoriesList(BaseModel):
