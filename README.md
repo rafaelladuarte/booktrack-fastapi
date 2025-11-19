@@ -28,7 +28,7 @@ A modelagem segue o padrão **Star Schema**, integrando conceitos de **engenhari
 
 - [x] Planejar funcionalidades
 - [x] Criar diagrama ER
-- [ ] Implementar models SQLAlchemy
+- [x] Implementar models SQLAlchemy
 - [ ] Criar rotas CRUD de Livros
 - [ ] Escrever testes
 - [ ] Configurar deploy no Render

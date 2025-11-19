@@ -25,12 +25,8 @@ class PropertiesRepository:
 
     def get_by_id(self, propertie_id: int):
         return (
-            self.db.query(self.model)
-            .filter(self.model.id == propertie_id)
-            .first()
+            self.db.query(self.model).filter(self.model.id == propertie_id).first()
         )
 
     def get_by_name(self, name: str):
-        return (
-            self.db.query(self.model).filter(self.model.name == name).first()
-        )
+        return self.db.query(self.model).filter(self.model.name == name).first()

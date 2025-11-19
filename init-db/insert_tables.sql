@@ -49,7 +49,7 @@ INSERT INTO categories (id, name, parent_id) VALUES
 (7, 'Biografia', 2);
 
 
-INSERT INTO books (id, publisher_id, collection_id, format_id, category_id, author, title, 
+INSERT INTO books (id, publisher_id, collection_id, format_id, category_id, author_id, title, 
                    original_publication_year, total_pages, cover_url)
 VALUES
 (1, 1, 1, 1, 6, 3, '1984', 1949, 328, 'https://covers.example.com/1984.jpg'),

@@ -2,12 +2,11 @@ from contextlib import contextmanager
 from datetime import datetime
 
 import pytest
+from booktrack_fastapi.example_main import app
+from booktrack_fastapi.models.properties import table_registry_properties
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
-
-from booktrack_fastapi.example_main import app
-from booktrack_fastapi.models.properties import table_registry_properties
 
 
 @pytest.fixture

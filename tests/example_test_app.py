@@ -1,9 +1,8 @@
 from http import HTTPStatus
 
 import pytest
-from fastapi.testclient import TestClient
-
 from booktrack_fastapi.example_main import app
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture

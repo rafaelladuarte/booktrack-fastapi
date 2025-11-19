@@ -23,9 +23,7 @@ class ReadingList(BaseModel):
 
 
 class ReadingQuery(BaseModel):
-    status_id: Optional[str] = Field(
-        None, description='Filtrar por ID do status'
-    )
+    status_id: Optional[str] = Field(None, description='Filtrar por ID do status')
     club_name: Optional[str] = Field(
         None, description='Filtrar pelo nome do Clube do Livro'
     )

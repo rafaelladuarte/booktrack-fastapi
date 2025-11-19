@@ -14,14 +14,13 @@ class PropertiesService:
         if len(name) < lenght:
             raise HTTPException(
                 status_code=422,
-                detail=f"O nome deve ter pelo menos {lenght} caracteres."
+                detail=f'O nome deve ter pelo menos {lenght} caracteres.',
             )
 
         existing = self.repo.get_by_name(name)
         if existing:
             raise HTTPException(
-                status_code=409,
-                detail=f"{self.model.__name__} '{name}' já existe."
+                status_code=409, detail=f"{self.model.__name__} '{name}' já existe."
             )
 
         return self.repo.create(name)
@@ -35,7 +34,7 @@ class PropertiesService:
         if not obj:
             raise HTTPException(
                 status_code=404,
-                detail=f"{self.model.__name__} id={propertie_id} não encontrado."
+                detail=f'{self.model.__name__} id={propertie_id} não encontrado.',
             )
 
         return obj

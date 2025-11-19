@@ -1,4 +1,6 @@
-from sqlalchemy import Date, ForeignKey, String, Integer
+import datetime
+
+from sqlalchemy import Date, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from booktrack_fastapi.models.associations import (
@@ -7,8 +9,6 @@ from booktrack_fastapi.models.associations import (
 )
 
 from .base import Base
-
-import datetime
 
 
 class Readings(Base):
@@ -20,10 +20,10 @@ class Readings(Base):
     status_id: Mapped[int] = mapped_column(ForeignKey('reading_status.id'))
 
     start_date: Mapped[datetime.date | None] = mapped_column(Date)
-    end_date: Mapped[datetime.date| None] = mapped_column(Date)
+    end_date: Mapped[datetime.date | None] = mapped_column(Date)
     pages_read: Mapped[int | None] = mapped_column(Integer)
     personal_goal: Mapped[str | None] = mapped_column(String(255))
-    club_date: Mapped[datetime.date| None] = mapped_column(Date)
+    club_date: Mapped[datetime.date | None] = mapped_column(Date)
     club_name: Mapped[str | None] = mapped_column(String(255))
 
     book: Mapped['Books'] = relationship(back_populates='readings')  # noqa: F821

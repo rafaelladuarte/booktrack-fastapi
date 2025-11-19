@@ -1,5 +1,4 @@
-from sqlalchemy import ForeignKey, Table
-from sqlalchemy import Table, Column, ForeignKey, Integer
+from sqlalchemy import Column, ForeignKey, Table
 
 from .base import Base
 
@@ -16,9 +15,7 @@ books_categories = Table(
     'books_categories',
     Base.metadata,
     Column('book_id', ForeignKey('books.id'), primary_key=True),
-    Column(
-        'category_id', ForeignKey('categories.id'), primary_key=True
-    ),
+    Column('category_id', ForeignKey('categories.id'), primary_key=True),
 )
 
 # READINGS ↔ TAGS

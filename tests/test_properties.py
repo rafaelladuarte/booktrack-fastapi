@@ -1,6 +1,5 @@
-from sqlalchemy import select
-
 from booktrack_fastapi.models.properties import Publishers
+from sqlalchemy import select
 
 
 def test_create_publishers(session):

@@ -19,9 +19,7 @@ class Categories(Base):
         remote_side='Categories.id', back_populates='children'
     )
 
-    children: Mapped[list['Categories']] = relationship(
-        back_populates='parent'
-    )
+    children: Mapped[list['Categories']] = relationship(back_populates='parent')
 
     books: Mapped[list['Books']] = relationship(  # noqa: F821
         secondary=books_categories, back_populates='categories'
