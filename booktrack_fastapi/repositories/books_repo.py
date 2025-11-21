@@ -61,15 +61,15 @@ class BooksRepository:
         parameters: dict,
     ):
         item = Books(
-            parameters.get('title'),
-            parameters.get('original_publication_year'),
-            parameters.get('total_pages'),
-            parameters.get('publisher_id'),
-            parameters.get('collection_id'),
-            parameters.get('format_id'),
-            parameters.get('author_id'),
-            parameters.get('category_id'),
-            parameters.get('cover_url'),
+            title=parameters.get('title'),
+            original_publication_year=parameters.get('original_publication_year'),
+            total_pages=parameters.get('total_pages'),
+            publisher_id=parameters.get('publisher_id'),
+            collection_id=parameters.get('collection_id'),
+            format_id=parameters.get('format_id'),
+            author_id=parameters.get('author_id'),
+            category_id=parameters.get('category_id'),
+            cover_url=parameters.get('cover_url'),
         )
         self.db.add(item)
         self.db.commit()

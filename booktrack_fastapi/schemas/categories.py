@@ -16,3 +16,7 @@ class CategoriesList(BaseModel):
 class CategoryCreate(BaseModel):
     name: str
     parent_id: Optional[int] = None
+
+
+class CategoryParentFilter(BaseModel):
+    parent_id: Optional[int] = None

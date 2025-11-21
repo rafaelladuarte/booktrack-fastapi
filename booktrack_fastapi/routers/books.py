@@ -5,14 +5,19 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from booktrack_fastapi.core.database import get_session
-from booktrack_fastapi.schemas.books import Book, BookExpandedList, BookFilter
+from booktrack_fastapi.schemas.books import (
+    Book,
+    BookCreate,
+    BookExpandedList,
+    BookFilter,
+)
 from booktrack_fastapi.services.books_service import BooksService
 from booktrack_fastapi.utility.tools import expand_book_row
 
 router = APIRouter(prefix='/books', tags=['Books'])
 
 
-@router.get('/', response_model=BookExpandedList, status_code=HTTPStatus.OK)
+@router.get('', response_model=BookExpandedList, status_code=HTTPStatus.OK)
 def list_book(
     filter_query: Annotated[BookFilter, Query()], db: Session = Depends(get_session)
 ):
@@ -35,21 +40,18 @@ def list_book_by_id(book_id: int, db: Session = Depends(get_session)):
     return {'data': [expand_book_row(item)]}
 
 
-# @router.get('/public', response_model=BookList, status_code=HTTPStatus.OK)
-# def list_books_public():
-#     return None
+@router.post('', status_code=HTTPStatus.CREATED)
+def create_book(data: BookCreate, db: Session = Depends(get_session)):
+    service = BooksService(db)
+    service.create(data=data)
+    return {'detail': 'Book created successfully!'}
 
 
-@router.post('/', response_model=Book, status_code=HTTPStatus.CREATED)
-def create_book():
-    return None
-
-
-@router.put('/{book_id}', response_model=Book, status_code=HTTPStatus.CREATED)
+@router.put('/{book_id}_X', response_model=Book, status_code=HTTPStatus.CREATED)
 def update_book(book_id: int):
     return None
 
 
-@router.delete('/{book_id}', status_code=HTTPStatus.NO_CONTENT)
+@router.delete('/{book_id}_X', status_code=HTTPStatus.NO_CONTENT)
 def delete_book_by_id(book_id: int):
     return None

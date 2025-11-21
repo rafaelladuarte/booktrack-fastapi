@@ -24,6 +24,85 @@ Além de servir como ferramenta pessoal, o projeto oferece uma **view pública l
 A modelagem segue o padrão **Star Schema**, integrando conceitos de **engenharia de dados** e **boas práticas de APIs REST**. Este projeto foi idealizado como um estudo prático de **POO em Python**, **FastAPI**, **modelagem de dados** e **deploy em nuvem**.
 
 
+## 🗂 **Estrutura do Projeto**
+
+```
+booktrack_api/
+  ├── booktrack_fastapi/
+  │   ├── core/              # Configurações gerais
+  │   ├── models/            # Modelos SQLAlchemy
+  │   ├── schemas/           # Schemas Pydantic
+  │   ├── repositories/      # Acesso ao banco
+  │   ├── services/          # Regras de negócio
+  │   ├── routers/           # Rotas da API
+  │   ├── utils/             # Funções auxiliares
+  │   └── main.py            # Ponto de entrada
+  ├── alembic/               # Migrações
+  ├── requirements.txt
+  ├── README.md
+  └── .env.example
+```
+
+
+## 📚 **Exemplos de Endpoints**
+
+### ➕ Criar um livro
+
+`POST /books/`
+
+```json
+{
+  "title": "1984",
+  "original_publication_year": 1949,
+  "total_pages": 328,
+  "publisher_id": 1,
+  "author_id": 3,
+  "format_id": 1,
+  "category_id": 6
+}
+```
+
+---
+
+### 🔍 Filtrar livros
+
+`GET /books/?author_id=3&year=1949`
+
+---
+
+### 📘 Exemplo de retorno expandido
+
+```json
+{
+  "id": 1,
+  "title": "1984",
+  "publisher": {
+    "id": 1,
+    "name": "Penguin Books"
+  },
+  "format": {
+    "id": 1,
+    "name": "Físico"
+  },
+  "author": {
+    "id": 3,
+    "name": "George Orwell"
+  }
+}
+```
+
+---
+
+## 🎯 **Objetivos do Projeto**
+
+* Criar uma API robusta em FastAPI
+* Organizar tudo em camadas (Routers → Service → Repository → DB)
+* Implementar consultas complexas
+* Criar leitura expandida (view SQL)
+* Proteger dados sensíveis com versão pública
+* Desenvolver habilidades em backend moderno
+
+
 ## Checklist de Desenvolvimento da API BookTrack
 
 - [x] Planejar funcionalidades

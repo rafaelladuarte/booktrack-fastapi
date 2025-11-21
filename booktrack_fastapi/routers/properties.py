@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from booktrack_fastapi.core.database import get_session
@@ -12,54 +12,94 @@ from booktrack_fastapi.models.shelves import Shelves
 from booktrack_fastapi.models.tags import Tags
 from booktrack_fastapi.repositories.properties_repo import PropertiesRepository
 from booktrack_fastapi.schemas.properties import (
-    # Property,
     PropertyCreate,
     PropertyList,
-    PropertyType,
-    PropertyTypeCreate,
 )
 from booktrack_fastapi.services.properties_service import PropertiesService
 
-router = APIRouter(prefix='/properties', tags=['Properties'])
-
-PROPERTY_MODEL_MAP = {
-    PropertyType.publishers: Publishers,
-    PropertyType.collections: Collections,
-    PropertyType.formats: Formats,
-    PropertyType.reading_status: ReadingStatus,
-    PropertyType.tags: Tags,
-    PropertyType.shelves: Shelves,
-}
+router = APIRouter(tags=['Properties'])
 
 
-@router.get('/{type}', response_model=PropertyList, status_code=HTTPStatus.OK)
-def list_properties_by_type(type: PropertyType, db: Session = Depends(get_session)):
-    model = PROPERTY_MODEL_MAP[type]
-
+@router.get('/collections', response_model=PropertyList, status_code=HTTPStatus.OK)
+def list_collections(db: Session = Depends(get_session)):
     service = PropertiesService(
-        db=db, model=model, repository_cls=PropertiesRepository
+        db=db, model=Collections, repository_cls=PropertiesRepository
     )
-
     items = service.list_all()
-
     return {'data': items}
 
 
 @router.post(
-    '/{type}', response_model=PropertyCreate, status_code=HTTPStatus.CREATED
+    '/collections', response_model=PropertyCreate, status_code=HTTPStatus.CREATED
 )
-def create_property(
-    type: PropertyTypeCreate, name: str, db: Session = Depends(get_session)
-):
-    model = PROPERTY_MODEL_MAP[type]
-
-    if not model:
-        raise HTTPException(400, 'Tipo inválido')
-
+def create_collection(name: str, db: Session = Depends(get_session)):
     service = PropertiesService(
-        db=db, model=model, repository_cls=PropertiesRepository
+        db=db, model=Collections, repository_cls=PropertiesRepository
     )
+    service.create(name=name)
+    return {'detail': 'Collection created successfully!'}
 
-    item = service.create(name=name)
 
-    return {'data': item.name}
+@router.get('/publishers', response_model=PropertyList, status_code=HTTPStatus.OK)
+def list_publisher(db: Session = Depends(get_session)):
+    service = PropertiesService(
+        db=db, model=Publishers, repository_cls=PropertiesRepository
+    )
+    items = service.list_all()
+    return {'data': items}
+
+
+@router.post('/publishers', status_code=HTTPStatus.CREATED)
+def create_publisher(name: str, db: Session = Depends(get_session)):
+    service = PropertiesService(
+        db=db, model=Publishers, repository_cls=PropertiesRepository
+    )
+    service.create(name=name)
+    return {'detail': 'Publisher created successfully!'}
+
+
+@router.get('/tags', response_model=PropertyList, status_code=HTTPStatus.OK)
+def list_tags(db: Session = Depends(get_session)):
+    service = PropertiesService(
+        db=db, model=Tags, repository_cls=PropertiesRepository
+    )
+    items = service.list_all()
+    return {'data': items}
+
+
+@router.post('/tags', response_model=PropertyCreate, status_code=HTTPStatus.CREATED)
+def create_tags(name: str, db: Session = Depends(get_session)):
+    service = PropertiesService(
+        db=db, model=Tags, repository_cls=PropertiesRepository
+    )
+    service.create(name=name)
+    return {'detail': 'Tag created successfully!'}
+
+
+@router.get('/shelves', response_model=PropertyList, status_code=HTTPStatus.OK)
+def list_shelves(db: Session = Depends(get_session)):
+    service = PropertiesService(
+        db=db, model=Shelves, repository_cls=PropertiesRepository
+    )
+    items = service.list_all()
+    return {'data': items}
+
+
+@router.get(
+    '/reading_status', response_model=PropertyList, status_code=HTTPStatus.OK
+)
+def list_reading_status(db: Session = Depends(get_session)):
+    service = PropertiesService(
+        db=db, model=ReadingStatus, repository_cls=PropertiesRepository
+    )
+    items = service.list_all()
+    return {'data': items}
+
+
+@router.get('/formats', response_model=PropertyList, status_code=HTTPStatus.OK)
+def list_formats(db: Session = Depends(get_session)):
+    service = PropertiesService(
+        db=db, model=Formats, repository_cls=PropertiesRepository
+    )
+    items = service.list_all()
+    return {'data': items}

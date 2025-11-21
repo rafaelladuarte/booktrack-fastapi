@@ -23,7 +23,9 @@ class PropertiesService:
                 status_code=409, detail=f"{self.model.__name__} '{name}' já existe."
             )
 
-        return self.repo.create(name)
+        self.repo.create(name)
+
+        return True
 
     def list_all(self):
         return self.repo.get_all()

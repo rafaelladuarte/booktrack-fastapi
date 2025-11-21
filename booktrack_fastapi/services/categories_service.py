@@ -17,21 +17,21 @@ class CategoriesService:
         if len(name) < min_length:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail=f'O nome deve ter pelo menos {min_length} caracteres.',
+                detail=f'The category name must be at least {min_length} characters.',
             )
 
         existing = self.repo.get_by_name_and_parent(name, parent_id)
         if existing:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail=f"Categoria '{name}' já existe neste nível.",
+                detail=f"Category '{name}' already exists at this level.",
             )
         if parent_id is not None:
             parent = self.repo.get_by_parent_id(parent_id)
             if not parent:
                 raise HTTPException(
                     status_code=HTTPStatus.NOT_FOUND,
-                    detail=f'Categoria pai id={parent_id} não encontrada.',
+                    detail=f'Parent_id {parent_id} not found.',
                 )
 
         return self.repo.create(name=name, parent_id=parent_id)
@@ -44,7 +44,7 @@ class CategoriesService:
         if not obj:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f'Categoria id={category_id} não encontrada.',
+                detail=f'Category id {category_id} not found.',
             )
         return obj
 
@@ -53,7 +53,7 @@ class CategoriesService:
         if not obj:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f'Categoria id={parent_id} não encontrada.',
+                detail=f'Parent_id {parent_id} not found.',
             )
         return obj
 

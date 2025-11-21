@@ -13,19 +13,19 @@ class Book(BaseModel):
     format_id: Optional[int] = None
     author_id: Optional[int] = None
     category_id: Optional[int] = None
-    cover_url: Optional[str] = None
+    cover_url: Optional[str]
 
 
 class BookCreate(BaseModel):
     title: str
     original_publication_year: int
     total_pages: int
-    publisher_id: int | None = None
-    collection_id: int | None = None
-    format_id: int | None = None
-    author_id: int | None = None
-    category_id: int | None = None
-    cover_url: str | None = None
+    publisher_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    format_id: Optional[int] = None
+    author_id: Optional[int] = None
+    category_id: Optional[int] = None
+    cover_url: Optional[str] = None
 
 
 class BookList(BaseModel):
