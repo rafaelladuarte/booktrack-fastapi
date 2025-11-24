@@ -114,3 +114,23 @@ class BooksService:
     def list_by_filter(self, filters):
         items = self.repo.get_by_filter(filters.model_dump())
         return [item_to_dict(i) for i in items]
+
+    def update_by_id(self, book_id: int, data: 'BookUpdate'):
+        obj = self.repo.get_by_id(book_id)
+        if not obj:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail=f'Book_id {book_id} not found.',
+            )
+        self.repo.update_by_id(book_id, data.model_dump(exclude_unset=True))
+        return True
+
+    def delete_by_id(self, book_id: int):
+        obj = self.repo.get_by_id(book_id)
+        if not obj:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail=f'Book_id {book_id} not found.',
+            )
+        self.repo.delete_by_id(book_id)
+        return True

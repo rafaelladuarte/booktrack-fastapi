@@ -10,6 +10,7 @@ from booktrack_fastapi.schemas.books import (
     BookCreate,
     BookExpandedList,
     BookFilter,
+    BookUpdate,
 )
 from booktrack_fastapi.services.books_service import BooksService
 from booktrack_fastapi.utility.tools import expand_book_row
@@ -47,11 +48,15 @@ def create_book(data: BookCreate, db: Session = Depends(get_session)):
     return {'detail': 'Book created successfully!'}
 
 
-@router.put('/{book_id}_X', response_model=Book, status_code=HTTPStatus.CREATED)
-def update_book(book_id: int):
-    return None
+@router.put('/{book_id}',status_code=HTTPStatus.OK)
+def update_book(book_id: int, data: BookUpdate, db: Session = Depends(get_session)):
+    service = BooksService(db)
+    service.update_by_id(book_id, data)
+    return {'detail': 'Book updated successfully!'}
 
 
-@router.delete('/{book_id}_X', status_code=HTTPStatus.NO_CONTENT)
-def delete_book_by_id(book_id: int):
-    return None
+@router.delete('/{book_id}', status_code=HTTPStatus.OK)
+def delete_book_by_id(book_id: int, db: Session = Depends(get_session)):
+    service = BooksService(db)
+    service.delete_by_id(book_id)
+    return {'detail': 'Book deleted successfully!'}

@@ -67,7 +67,7 @@ def list_tags(db: Session = Depends(get_session)):
     return {'data': items}
 
 
-@router.post('/tags', response_model=PropertyCreate, status_code=HTTPStatus.CREATED)
+@router.post('/tags', status_code=HTTPStatus.CREATED)
 def create_tags(name: str, db: Session = Depends(get_session)):
     service = PropertiesService(
         db=db, model=Tags, repository_cls=PropertiesRepository
