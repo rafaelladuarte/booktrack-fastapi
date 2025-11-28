@@ -1,4 +1,4 @@
-from sqlalchemy import select, update, delete
+from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
 from booktrack_fastapi.models.books import Books, BooksExpandedView
@@ -75,7 +75,6 @@ class BooksRepository:
         self.db.commit()
         self.db.refresh(item)
         return item
-
 
     def update_by_id(
         self,

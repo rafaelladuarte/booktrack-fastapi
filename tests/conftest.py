@@ -2,29 +2,43 @@ from contextlib import contextmanager
 from datetime import datetime
 
 import pytest
-from booktrack_fastapi.example_main import app
-from booktrack_fastapi.models.properties import table_registry_properties
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
+
+from booktrack_fastapi.core.database import get_session
+from booktrack_fastapi.main import app
+from booktrack_fastapi.models.base import Base
+from booktrack_fastapi.models.users import table_registry
 
 
 @pytest.fixture
-def client():
-    return TestClient(app)
+def client(session):
+    def get_session_override():
+        return session
+
+    app.dependency_overrides[get_session] = get_session_override
+    with TestClient(app) as client:
+        yield client
+    app.dependency_overrides.clear()
 
 
 @pytest.fixture
 def session():
-    list_table_registry = [table_registry_properties]
-    engine = create_engine('sqlite:///:memory:')
-    for table_registry in list_table_registry:
-        table_registry.metadata.create_all(engine)
+    engine = create_engine(
+        'sqlite:///:memory:',
+        connect_args={'check_same_thread': False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(engine)
+    table_registry.metadata.create_all(engine)
 
-        with Session(engine) as session:
-            yield session
+    with Session(engine) as session:
+        yield session
 
-        table_registry.metadata.drop_all(engine)
+    Base.metadata.drop_all(engine)
+    table_registry.metadata.drop_all(engine)
 
     engine.dispose()
 

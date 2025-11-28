@@ -5,8 +5,9 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from booktrack_fastapi.core.database import get_session
+from booktrack_fastapi.core.security import get_current_user
+from booktrack_fastapi.models.users import User
 from booktrack_fastapi.schemas.books import (
-    Book,
     BookCreate,
     BookExpandedList,
     BookFilter,
@@ -20,7 +21,9 @@ router = APIRouter(prefix='/books', tags=['Books'])
 
 @router.get('', response_model=BookExpandedList, status_code=HTTPStatus.OK)
 def list_book(
-    filter_query: Annotated[BookFilter, Query()], db: Session = Depends(get_session)
+    filter_query: Annotated[BookFilter, Query()],
+    db: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
     service = BooksService(db)
 
@@ -34,7 +37,11 @@ def list_book(
 
 
 @router.get('/{book_id}', response_model=BookExpandedList, status_code=HTTPStatus.OK)
-def list_book_by_id(book_id: int, db: Session = Depends(get_session)):
+def list_book_by_id(
+    book_id: int,
+    db: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     service = BooksService(db)
 
     item = service.get_by_id(book_id=book_id)
@@ -42,21 +49,34 @@ def list_book_by_id(book_id: int, db: Session = Depends(get_session)):
 
 
 @router.post('', status_code=HTTPStatus.CREATED)
-def create_book(data: BookCreate, db: Session = Depends(get_session)):
+def create_book(
+    data: BookCreate,
+    db: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     service = BooksService(db)
     service.create(data=data)
     return {'detail': 'Book created successfully!'}
 
 
-@router.put('/{book_id}',status_code=HTTPStatus.OK)
-def update_book(book_id: int, data: BookUpdate, db: Session = Depends(get_session)):
+@router.put('/{book_id}', status_code=HTTPStatus.OK)
+def update_book(
+    book_id: int,
+    data: BookUpdate,
+    db: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     service = BooksService(db)
     service.update_by_id(book_id, data)
     return {'detail': 'Book updated successfully!'}
 
 
 @router.delete('/{book_id}', status_code=HTTPStatus.OK)
-def delete_book_by_id(book_id: int, db: Session = Depends(get_session)):
+def delete_book_by_id(
+    book_id: int,
+    db: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     service = BooksService(db)
     service.delete_by_id(book_id)
     return {'detail': 'Book deleted successfully!'}

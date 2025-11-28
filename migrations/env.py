@@ -3,8 +3,6 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from booktrack_fastapi.models import Base
-
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -18,9 +16,29 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata =  Base.metadata
+from booktrack_fastapi.models.base import Base
+from booktrack_fastapi.models.users import table_registry
+from booktrack_fastapi.core.settings import Settings
+
+# Import all models to ensure they are registered
+from booktrack_fastapi.models import (
+    Authors,
+    Books,
+    Categories,
+    Collections,
+    Formats,
+    Publishers,
+    ReadingStatus,
+    Readings,
+    Shelves,
+    Tags,
+)
+
+# Combine metadata from both registries
+target_metadata = [Base.metadata, table_registry.metadata]
+
+# Override sqlalchemy.url from settings
+config.set_main_option('sqlalchemy.url', Settings().DATABASE_URL)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

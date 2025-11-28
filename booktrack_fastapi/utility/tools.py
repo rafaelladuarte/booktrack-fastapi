@@ -69,3 +69,11 @@ def expand_book_row(row: dict) -> dict:
         if row.get('reading_id')
         else None,
     }
+
+
+def convert_dates(item: dict) -> dict:
+    for key in ['start_date', 'end_date', 'updated_at', 'club_date']:
+        val = item.get(key)
+        if val is not None:
+            item[key] = str(val)
+    return item

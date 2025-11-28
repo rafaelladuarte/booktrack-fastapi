@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Date, ForeignKey, Integer, String, DateTime, func
+from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from booktrack_fastapi.models.associations import (

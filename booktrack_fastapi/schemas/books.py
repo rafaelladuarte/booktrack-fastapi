@@ -47,7 +47,9 @@ class BookUpdate(BaseModel):
     original_publication_year: Optional[int] = Field(
         None, description='Atualizar ano de publicação original'
     )
-    total_pages: Optional[int] = Field(None, description='Atualizar número total de páginas')
+    total_pages: Optional[int] = Field(
+        None, description='Atualizar número total de páginas'
+    )
 
 
 class BookFilter(BaseModel):

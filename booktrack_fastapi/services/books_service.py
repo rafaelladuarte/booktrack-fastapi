@@ -11,7 +11,7 @@ from booktrack_fastapi.models.publishers import Publishers
 from booktrack_fastapi.repositories.books_repo import BooksRepository
 from booktrack_fastapi.repositories.categories_repo import CategoriesRepository
 from booktrack_fastapi.repositories.properties_repo import PropertiesRepository
-from booktrack_fastapi.schemas.books import BookCreate
+from booktrack_fastapi.schemas.books import BookCreate, BookUpdate
 from booktrack_fastapi.utility.tools import item_to_dict
 
 
@@ -37,14 +37,14 @@ class BooksService:
         if len(title) < min_length:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail=f'The name must be at least {min_length} characters.',
+                detail=f'The name must be at least {min_length} characters.'
             )
 
         title_existing = self.repo.get_by_filter({'title': title})
         if title_existing:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail=f"Book '{title}' already not exists.",
+                detail=f"Book '{title}' already not exists."
             )
 
         if data.category_id:
@@ -53,7 +53,7 @@ class BooksService:
             if not category_existing:
                 raise HTTPException(
                     status_code=HTTPStatus.BAD_REQUEST,
-                    detail=f'Category_id {data.category_id} not exists.',
+                    detail=f'Category_id {data.category_id} not exists.'
                 )
 
         # authors_repo = AuthorsRepository(self.db)
@@ -71,7 +71,7 @@ class BooksService:
             if not publisher_existing:
                 raise HTTPException(
                     status_code=HTTPStatus.BAD_REQUEST,
-                    detail=f'Publisher_id {data.publisher_id} not exists.',
+                    detail=f'Publisher_id {data.publisher_id} not exists.'
                 )
 
         if data.format_id:
@@ -81,7 +81,7 @@ class BooksService:
             if not format_existing:
                 raise HTTPException(
                     status_code=HTTPStatus.BAD_REQUEST,
-                    detail=f'Format_id {data.format_id} not exists.',
+                    detail=f'Format_id {data.format_id} not exists.'
                 )
 
         if data.collection_id:
@@ -91,7 +91,7 @@ class BooksService:
             if not collection_existing:
                 raise HTTPException(
                     status_code=HTTPStatus.BAD_REQUEST,
-                    detail=f'Collection_id {data.collection_id} not exists.',
+                    detail=f'Collection_id {data.collection_id} not exists.'
                 )
 
         self.repo.create(data.model_dump())
@@ -107,7 +107,7 @@ class BooksService:
         if not obj:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f'Book_id {book_id} not found.',
+                detail=f'Book_id {book_id} not found.'
             )
         return item_to_dict(obj)
 
@@ -120,7 +120,7 @@ class BooksService:
         if not obj:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f'Book_id {book_id} not found.',
+                detail=f'Book_id {book_id} not found.'
             )
         self.repo.update_by_id(book_id, data.model_dump(exclude_unset=True))
         return True
@@ -130,7 +130,7 @@ class BooksService:
         if not obj:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f'Book_id {book_id} not found.',
+                detail=f'Book_id {book_id} not found.'
             )
         self.repo.delete_by_id(book_id)
         return True

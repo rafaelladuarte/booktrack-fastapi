@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from booktrack_fastapi.models.readings import Readings, ReadingExpandedView
+from booktrack_fastapi.models.readings import ReadingExpandedView, Readings
 
 
 class ReadingsRepository:
@@ -30,7 +30,7 @@ class ReadingsRepository:
         if filters.get('publisher_id'):
             conditions.append(
                 ReadingExpandedView.publisher_id == filters['publisher_id']
-            )   
+            )
 
         if filters.get('collection_id'):
             conditions.append(

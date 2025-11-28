@@ -1,8 +1,8 @@
-"""initial schema
+"""create users table
 
-Revision ID: b06c3cb32e7c
+Revision ID: 8bb83c9cefe9
 Revises: 
-Create Date: 2025-11-18 19:12:57.951793
+Create Date: 2025-11-27 21:45:04.431096
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'b06c3cb32e7c'
+revision: str = '8bb83c9cefe9'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,6 +27,39 @@ def upgrade() -> None:
     sa.Column('gender', sa.String(length=1), nullable=True),
     sa.Column('country_of_origin', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('books_expanded_view',
+    sa.Column('book_id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(), nullable=False),
+    sa.Column('original_publication_year', sa.Integer(), nullable=True),
+    sa.Column('total_pages', sa.Integer(), nullable=True),
+    sa.Column('cover_url', sa.String(), nullable=True),
+    sa.Column('author_id', sa.Integer(), nullable=True),
+    sa.Column('author_name', sa.String(), nullable=True),
+    sa.Column('author_gender', sa.String(), nullable=True),
+    sa.Column('author_country', sa.String(), nullable=True),
+    sa.Column('publisher_id', sa.Integer(), nullable=True),
+    sa.Column('publisher_name', sa.String(), nullable=True),
+    sa.Column('collection_id', sa.Integer(), nullable=True),
+    sa.Column('collection_name', sa.String(), nullable=True),
+    sa.Column('format_id', sa.Integer(), nullable=True),
+    sa.Column('format_name', sa.String(), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=True),
+    sa.Column('category_name', sa.String(), nullable=True),
+    sa.Column('category_parent_id', sa.Integer(), nullable=True),
+    sa.Column('reading_id', sa.Integer(), nullable=True),
+    sa.Column('start_date', sa.Date(), nullable=True),
+    sa.Column('end_date', sa.Date(), nullable=True),
+    sa.Column('pages_read', sa.Integer(), nullable=True),
+    sa.Column('personal_goal', sa.String(), nullable=True),
+    sa.Column('club_date', sa.Date(), nullable=True),
+    sa.Column('club_name', sa.String(), nullable=True),
+    sa.Column('reading_status_id', sa.Integer(), nullable=True),
+    sa.Column('reading_status_name', sa.String(), nullable=True),
+    sa.Column('reading_tags', sa.String(), nullable=True),
+    sa.Column('reading_shelves', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('book_id'),
+    info={'is_view': True}
     )
     op.create_table('categories',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -57,6 +90,40 @@ def upgrade() -> None:
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
+    )
+    op.create_table('readings_expanded_view',
+    sa.Column('reading_id', sa.Integer(), nullable=False),
+    sa.Column('start_date', sa.Date(), nullable=True),
+    sa.Column('end_date', sa.Date(), nullable=True),
+    sa.Column('pages_read', sa.Integer(), nullable=True),
+    sa.Column('personal_goal', sa.String(), nullable=True),
+    sa.Column('club_date', sa.Date(), nullable=True),
+    sa.Column('club_name', sa.String(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('status_id', sa.Integer(), nullable=False),
+    sa.Column('status_name', sa.String(), nullable=False),
+    sa.Column('book_id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(), nullable=False),
+    sa.Column('original_publication_year', sa.Integer(), nullable=True),
+    sa.Column('total_pages', sa.Integer(), nullable=True),
+    sa.Column('cover_url', sa.String(), nullable=True),
+    sa.Column('author_id', sa.Integer(), nullable=True),
+    sa.Column('author_name', sa.String(), nullable=True),
+    sa.Column('author_gender', sa.String(), nullable=True),
+    sa.Column('author_country', sa.String(), nullable=True),
+    sa.Column('publisher_id', sa.Integer(), nullable=True),
+    sa.Column('publisher_name', sa.String(), nullable=True),
+    sa.Column('collection_id', sa.Integer(), nullable=True),
+    sa.Column('collection_name', sa.String(), nullable=True),
+    sa.Column('format_id', sa.Integer(), nullable=True),
+    sa.Column('format_name', sa.String(), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=True),
+    sa.Column('category_name', sa.String(), nullable=True),
+    sa.Column('category_parent_id', sa.Integer(), nullable=True),
+    sa.Column('reading_tags', sa.String(), nullable=True),
+    sa.Column('reading_shelves', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('reading_id'),
+    info={'is_view': True}
     )
     op.create_table('shelves',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -106,6 +173,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('book_id', sa.Integer(), nullable=False),
     sa.Column('status_id', sa.Integer(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.Column('start_date', sa.Date(), nullable=True),
     sa.Column('end_date', sa.Date(), nullable=True),
     sa.Column('pages_read', sa.Integer(), nullable=True),
@@ -130,12 +198,24 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['tag_id'], ['tags.id'], ),
     sa.PrimaryKeyConstraint('reading_id', 'tag_id')
     )
+    op.create_table('users',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('password', sa.String(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('username')
+    )
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     """Downgrade schema."""
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('users')
     op.drop_table('readings_tags')
     op.drop_table('readings_shelves')
     op.drop_table('readings')
@@ -144,10 +224,12 @@ def downgrade() -> None:
     op.drop_table('books')
     op.drop_table('tags')
     op.drop_table('shelves')
+    op.drop_table('readings_expanded_view')
     op.drop_table('reading_status')
     op.drop_table('publishers')
     op.drop_table('formats')
     op.drop_table('collections')
     op.drop_table('categories')
+    op.drop_table('books_expanded_view')
     op.drop_table('authors')
     # ### end Alembic commands ###

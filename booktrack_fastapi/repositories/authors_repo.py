@@ -1,6 +1,8 @@
-from sqlalchemy import select, update, delete
+from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
+
 from booktrack_fastapi.models.authors import Authors
+
 
 class AuthorsRepository:
     def __init__(self, db: Session):

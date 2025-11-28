@@ -1,9 +1,12 @@
 from http import HTTPStatus
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+
 from booktrack_fastapi.repositories.authors_repo import AuthorsRepository
 from booktrack_fastapi.schemas.authors import AuthorCreate, AuthorUpdate
 from booktrack_fastapi.utility.tools import item_to_dict
+
 
 class AuthorsService:
     def __init__(self, db: Session):
@@ -33,7 +36,9 @@ class AuthorsService:
                 status_code=HTTPStatus.NOT_FOUND,
                 detail=f'Author_id {author_id} not found.',
             )
-        updated_obj = self.repo.update_by_id(author_id, data.model_dump(exclude_unset=True))
+        updated_obj = self.repo.update_by_id(
+            author_id, data.model_dump(exclude_unset=True)
+        )
         return item_to_dict(updated_obj)
 
     def delete(self, author_id: int):

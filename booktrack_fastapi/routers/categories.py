@@ -5,6 +5,8 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from booktrack_fastapi.core.database import get_session
+from booktrack_fastapi.core.security import get_current_user
+from booktrack_fastapi.models.users import User
 from booktrack_fastapi.schemas.categories import (
     CategoriesList,
     Category,
@@ -20,6 +22,7 @@ router = APIRouter(prefix='/categories', tags=['Categories'])
 def list_categories(
     filter_query: Annotated[CategoryParentFilter, Query()],
     db: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
     service = CategoriesService(db)
 
@@ -51,7 +54,11 @@ def list_categories(
 
 
 @router.get('/{category_id}', response_model=Category, status_code=HTTPStatus.OK)
-def list_categories_by_id(category_id: int, db: Session = Depends(get_session)):
+def list_categories_by_id(
+    category_id: int,
+    db: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     service = CategoriesService(db)
 
     item = service.get_by_id(category_id)
@@ -59,7 +66,11 @@ def list_categories_by_id(category_id: int, db: Session = Depends(get_session)):
 
 
 @router.post('', response_model=Category, status_code=HTTPStatus.CREATED)
-def create_categorie(data: CategoryCreate, db: Session = Depends(get_session)):
+def create_categorie(
+    data: CategoryCreate,
+    db: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     service = CategoriesService(db)
     item = service.create(name=data.name, parent_id=data.parent_id)
 

@@ -1,13 +1,14 @@
-from booktrack_fastapi.models.properties import Publishers
 from sqlalchemy import select
+
+from booktrack_fastapi.models.publishers import Publishers
 
 
 def test_create_publishers(session):
-    pub = Publishers(nome='Aleph')
+    pub = Publishers(name='Aleph')
 
     session.add(pub)
     session.commit()
 
-    pub = session.scalar(select(Publishers).where(Publishers.nome == 'Aleph'))
+    pub = session.scalar(select(Publishers).where(Publishers.name == 'Aleph'))
 
-    assert pub.nome == 'Aleph'
+    assert pub.name == 'Aleph'

@@ -17,7 +17,7 @@ class CategoriesService:
         if len(name) < min_length:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail=f'The category name must be at least {min_length} characters.',
+                detail=f'The category name must be at least {min_length} characters.'
             )
 
         existing = self.repo.get_by_name_and_parent(name, parent_id)
