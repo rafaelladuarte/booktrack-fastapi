@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS readings_expanded_view;
 CREATE OR REPLACE VIEW readings_expanded_view AS
 SELECT
     r.id AS reading_id,

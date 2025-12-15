@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.core.database import get_session
 from booktrack_fastapi.core.security import get_current_user
@@ -18,52 +18,52 @@ router = APIRouter(prefix='/authors', tags=['Authors'])
 
 
 @router.get('', response_model=AuthorList, status_code=HTTPStatus.OK)
-def list_author(
-    db: Session = Depends(get_session),
+async def list_author(
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = AuthorsService(db)
-    items = service.list_all()
+    items = await service.list_all()
     return {'data': items}
 
 
 @router.get('/{author_id}', response_model=AuthorList, status_code=HTTPStatus.OK)
-def list_author_by_id(
+async def list_author_by_id(
     author_id: int,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = AuthorsService(db)
-    item = service.get_by_id(author_id)
+    item = await service.get_by_id(author_id)
     return {'data': [item]}
 
 
 @router.post('', response_model=Author, status_code=HTTPStatus.CREATED)
-def create_author(
+async def create_author(
     data: AuthorCreate,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = AuthorsService(db)
-    return service.create(data)
+    return await service.create(data)
 
 
 @router.put('/{author_id}', response_model=Author, status_code=HTTPStatus.OK)
-def update_author(
+async def update_author(
     author_id: int,
     data: AuthorUpdate,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = AuthorsService(db)
-    return service.update(author_id, data)
+    return await service.update(author_id, data)
 
 
 @router.delete('/{author_id}', status_code=HTTPStatus.NO_CONTENT)
-def delete_author_by_id(
+async def delete_author_by_id(
     author_id: int,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = AuthorsService(db)
-    service.delete(author_id)
+    await service.delete(author_id)

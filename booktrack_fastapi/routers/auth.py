@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.core.database import get_session
 from booktrack_fastapi.core.security import (
@@ -21,24 +21,11 @@ oauth2_scheme_refresh = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 
 @router.post('/token', response_model=TokenResponse)
-def login_for_access_token(
+async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
-    """
-    Rota de autenticação que retorna Access Token e Refresh Token.
-
-    Args:
-        form_data: Credenciais do usuário (username como email, password)
-        session: Sessão do banco de dados
-
-    Returns:
-        TokenResponse com access_token, refresh_token e token_type
-
-    Raises:
-        HTTPException 401: Se as credenciais forem inválidas
-    """
-    user = session.scalar(select(User).where(User.username == form_data.username))
+    user = await session.scalar(select(User).where(User.username == form_data.username))
 
     if not user:
         raise HTTPException(
@@ -63,23 +50,10 @@ def login_for_access_token(
 
 
 @router.post('/refresh', response_model=TokenResponse)
-def refresh_access_token(
+async def refresh_access_token(
     token: str = Depends(oauth2_scheme_refresh),
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
-    """
-    Rota para renovar Access Token usando Refresh Token.
-
-    Args:
-        token: Refresh Token extraído do header Authorization
-        session: Sessão do banco de dados
-
-    Returns:
-        TokenResponse com novo access_token, novo refresh_token e token_type
-
-    Raises:
-        HTTPException 401: Se o refresh token for inválido ou expirado
-    """
     payload = verify_token(token, token_type='refresh')
     subject_email = payload.get('sub')
     if not subject_email:
@@ -88,7 +62,7 @@ def refresh_access_token(
             detail='Token inválido: subject não encontrado',
             headers={'WWW-Authenticate': 'Bearer'},
         )
-    user = session.scalar(select(User).where(User.email == subject_email))
+    user = await session.scalar(select(User).where(User.email == subject_email))
 
     if not user:
         raise HTTPException(

@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.core.database import get_session
 from booktrack_fastapi.core.security import get_current_user
@@ -19,16 +19,16 @@ router = APIRouter(prefix='/categories', tags=['Categories'])
 
 
 @router.get('', response_model=CategoriesList, status_code=HTTPStatus.OK)
-def list_categories(
+async def list_categories(
     filter_query: Annotated[CategoryParentFilter, Query()],
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = CategoriesService(db)
 
     parent_id = filter_query.parent_id
     if parent_id:
-        items = service.get_by_parent_id(parent_id)
+        items = await service.get_by_parent_id(parent_id)
 
         result_item = []
         for item in items:
@@ -40,7 +40,7 @@ def list_categories(
 
         return {'data': result_item}
 
-    items = service.list_all()
+    items = await service.list_all()
 
     result_item = []
     for item in items:
@@ -54,24 +54,24 @@ def list_categories(
 
 
 @router.get('/{category_id}', response_model=Category, status_code=HTTPStatus.OK)
-def list_categories_by_id(
+async def list_categories_by_id(
     category_id: int,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = CategoriesService(db)
 
-    item = service.get_by_id(category_id)
+    item = await service.get_by_id(category_id)
     return {'id': item.id, 'name': item.name, 'parent_id': item.parent_id}
 
 
 @router.post('', response_model=Category, status_code=HTTPStatus.CREATED)
-def create_categorie(
+async def create_categorie(
     data: CategoryCreate,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = CategoriesService(db)
-    item = service.create(name=data.name, parent_id=data.parent_id)
+    item = await service.create(name=data.name, parent_id=data.parent_id)
 
     return {'id': item.id, 'name': item.name, 'parent_id': item.parent_id}

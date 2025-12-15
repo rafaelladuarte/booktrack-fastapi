@@ -1,4 +1,3 @@
-from http import HTTPStatus
 
 from jwt import decode
 
@@ -17,4 +16,3 @@ def test_jwt():
     assert decoded['test'] == data['test']
     assert 'exp' in decoded
     assert decoded['type'] == 'access'
-

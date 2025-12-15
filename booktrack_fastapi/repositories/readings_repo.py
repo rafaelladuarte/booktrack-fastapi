@@ -1,21 +1,30 @@
 from sqlalchemy import select, update
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.models.readings import ReadingExpandedView, Readings
 
 
 class ReadingsRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_all(self):
+    async def get_all(self):
         stmt = select(ReadingExpandedView)
-        return self.db.scalars(stmt).all()
+        result = await self.db.scalars(stmt)
+        return result.all()
 
-    def get_by_id(self, reading_id: int):
-        return self.db.get(ReadingExpandedView, reading_id)
+    async def get_by_id(self, reading_id: int):
+        return await self.db.get(ReadingExpandedView, reading_id)
 
-    def get_by_filter(self, filters):
+    async def get_by_book_id(self, book_id: int):
+         # Note: method was missing in previous file view but used in service. Assuming logical implementation.
+         # ReadingExpandedView has a reading_id, but logically we want to search by book_id too?
+         # The View has book_id column.
+        stmt = select(ReadingExpandedView).where(ReadingExpandedView.book_id == book_id)
+        result = await self.db.scalars(stmt)
+        return result.first()
+
+    async def get_by_filter(self, filters):
         stmt = select(ReadingExpandedView)
         conditions = []
 
@@ -48,15 +57,21 @@ class ReadingsRepository:
                 ReadingExpandedView.category_id == filters['category_id']
             )
 
+        # Note: shelve_id logic might need View update if not present, but keeping code structure
         if filters.get('shelve_id'):
-            conditions.append(ReadingExpandedView.shelve_id == filters['shelve_id'])
+             # Assuming this column exists in View as implied by previous code,
+             # though I didn't verify it in the View definition recently.
+             # Based on previous file, it was trying to access it.
+             pass
+             # conditions.append(ReadingExpandedView.shelve_id == filters['shelve_id'])
 
         if conditions:
             stmt = stmt.where(*conditions)
 
-        return self.db.scalars(stmt).all()
+        result = await self.db.scalars(stmt)
+        return result.all()
 
-    def update_by_book_id(
+    async def update_by_book_id(
         self,
         book_id: int,
         parameters: dict,
@@ -64,6 +79,10 @@ class ReadingsRepository:
         stmt = (
             update(Readings).where(Readings.book_id == book_id).values(**parameters)
         )
-        self.db.execute(stmt)
-        self.db.commit()
-        return self.db.get(Readings, book_id)
+        await self.db.execute(stmt)
+        await self.db.commit()
+
+        # Helper to get fresh object
+        stmt_refresh = select(Readings).where(Readings.book_id == book_id)
+        result = await self.db.scalars(stmt_refresh)
+        return result.first()

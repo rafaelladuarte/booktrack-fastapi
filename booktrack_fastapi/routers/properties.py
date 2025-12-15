@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.core.database import get_session
 from booktrack_fastapi.core.security import get_current_user
@@ -23,115 +23,115 @@ router = APIRouter(tags=['Properties'])
 
 
 @router.get('/collections', response_model=PropertyList, status_code=HTTPStatus.OK)
-def list_collections(
-    db: Session = Depends(get_session),
+async def list_collections(
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=Collections, repository_cls=PropertiesRepository
     )
-    items = service.list_all()
+    items = await service.list_all()
     return {'data': items}
 
 
 @router.post(
     '/collections', response_model=PropertyCreate, status_code=HTTPStatus.CREATED
 )
-def create_collection(
+async def create_collection(
     name: str,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=Collections, repository_cls=PropertiesRepository
     )
-    service.create(name=name)
+    await service.create(name=name)
     return {'detail': 'Collection created successfully!'}
 
 
 @router.get('/publishers', response_model=PropertyList, status_code=HTTPStatus.OK)
-def list_publisher(
-    db: Session = Depends(get_session),
+async def list_publisher(
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=Publishers, repository_cls=PropertiesRepository
     )
-    items = service.list_all()
+    items = await service.list_all()
     return {'data': items}
 
 
 @router.post('/publishers', status_code=HTTPStatus.CREATED)
-def create_publisher(
+async def create_publisher(
     name: str,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=Publishers, repository_cls=PropertiesRepository
     )
-    service.create(name=name)
+    await service.create(name=name)
     return {'detail': 'Publisher created successfully!'}
 
 
 @router.get('/tags', response_model=PropertyList, status_code=HTTPStatus.OK)
-def list_tags(
-    db: Session = Depends(get_session),
+async def list_tags(
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=Tags, repository_cls=PropertiesRepository
     )
-    items = service.list_all()
+    items = await service.list_all()
     return {'data': items}
 
 
 @router.post('/tags', status_code=HTTPStatus.CREATED)
-def create_tags(
+async def create_tags(
     name: str,
-    db: Session = Depends(get_session),
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=Tags, repository_cls=PropertiesRepository
     )
-    service.create(name=name)
+    await service.create(name=name)
     return {'detail': 'Tag created successfully!'}
 
 
 @router.get('/shelves', response_model=PropertyList, status_code=HTTPStatus.OK)
-def list_shelves(
-    db: Session = Depends(get_session),
+async def list_shelves(
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=Shelves, repository_cls=PropertiesRepository
     )
-    items = service.list_all()
+    items = await service.list_all()
     return {'data': items}
 
 
 @router.get(
     '/reading_status', response_model=PropertyList, status_code=HTTPStatus.OK
 )
-def list_reading_status(
-    db: Session = Depends(get_session),
+async def list_reading_status(
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=ReadingStatus, repository_cls=PropertiesRepository
     )
-    items = service.list_all()
+    items = await service.list_all()
     return {'data': items}
 
 
 @router.get('/formats', response_model=PropertyList, status_code=HTTPStatus.OK)
-def list_formats(
-    db: Session = Depends(get_session),
+async def list_formats(
+    db: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     service = PropertiesService(
         db=db, model=Formats, repository_cls=PropertiesRepository
     )
-    items = service.list_all()
+    items = await service.list_all()
     return {'data': items}

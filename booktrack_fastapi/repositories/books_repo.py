@@ -1,21 +1,22 @@
 from sqlalchemy import delete, select, update
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.models.books import Books, BooksExpandedView
 
 
 class BooksRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_all(self):
+    async def get_all(self):
         stmt = select(BooksExpandedView)
-        return self.db.scalars(stmt).all()
+        result = await self.db.scalars(stmt)
+        return result.all()
 
-    def get_by_id(self, book_id: int):
-        return self.db.get(BooksExpandedView, book_id)
+    async def get_by_id(self, book_id: int):
+        return await self.db.get(BooksExpandedView, book_id)
 
-    def get_by_filter(self, filters):
+    async def get_by_filter(self, filters):
         stmt = select(BooksExpandedView)
         conditions = []
 
@@ -54,9 +55,10 @@ class BooksRepository:
         if conditions:
             stmt = stmt.where(*conditions)
 
-        return self.db.scalars(stmt).all()
+        result = await self.db.scalars(stmt)
+        return result.all()
 
-    def create(
+    async def create(
         self,
         parameters: dict,
     ):
@@ -72,11 +74,11 @@ class BooksRepository:
             cover_url=parameters.get('cover_url'),
         )
         self.db.add(item)
-        self.db.commit()
-        self.db.refresh(item)
+        await self.db.commit()
+        await self.db.refresh(item)
         return item
 
-    def update_by_id(
+    async def update_by_id(
         self,
         book_id: int,
         parameters: dict,
@@ -84,14 +86,14 @@ class BooksRepository:
         stmt = (
             update(Books).where(Books.id == book_id).values(**parameters)
         )
-        self.db.execute(stmt)
-        self.db.commit()
+        await self.db.execute(stmt)
+        await self.db.commit()
         return True
 
-    def delete_by_id(self, book_id: int):
+    async def delete_by_id(self, book_id: int):
         stmt = (
             delete(Books).where(Books.id == book_id)
         )
-        self.db.execute(stmt)
-        self.db.commit()
+        await self.db.execute(stmt)
+        await self.db.commit()
         return True

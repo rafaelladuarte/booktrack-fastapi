@@ -1,32 +1,38 @@
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class PropertiesRepository:
-    def __init__(self, db: Session, model):
+    def __init__(self, db: AsyncSession, model):
         self.db = db
         self.model = model
 
-    def create(self, name: str):
+    async def create(self, name: str):
         obj = self.model(name=name)
         self.db.add(obj)
 
         try:
-            self.db.commit()
-            self.db.refresh(obj)
+            await self.db.commit()
+            await self.db.refresh(obj)
             return obj
 
         except SQLAlchemyError:
-            self.db.rollback()
+            await self.db.rollback()
             raise
 
-    def get_all(self):
-        return self.db.query(self.model).all()
+    async def get_all(self):
+        stmt = select(self.model)
+        result = await self.db.scalars(stmt)
+        return result.all()
 
-    def get_by_id(self, propertie_id: int):
-        return (
-            self.db.query(self.model).filter(self.model.id == propertie_id).first()
-        )
+    async def get_by_id(self, propertie_id: int):
+        stmt = select(self.model).where(self.model.id == propertie_id)
+        result = await self.db.scalars(stmt)
+        return result.first()
+        # Alternative: return await self.db.get(self.model, propertie_id)
 
-    def get_by_name(self, name: str):
-        return self.db.query(self.model).filter(self.model.name == name).first()
+    async def get_by_name(self, name: str):
+        stmt = select(self.model).where(self.model.name == name)
+        result = await self.db.scalars(stmt)
+        return result.first()
