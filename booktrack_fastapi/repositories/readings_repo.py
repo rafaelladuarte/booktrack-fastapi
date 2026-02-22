@@ -17,9 +17,6 @@ class ReadingsRepository:
         return await self.db.get(ReadingExpandedView, reading_id)
 
     async def get_by_book_id(self, book_id: int):
-         # Note: method was missing in previous file view but used in service. Assuming logical implementation.
-         # ReadingExpandedView has a reading_id, but logically we want to search by book_id too?
-         # The View has book_id column.
         stmt = select(ReadingExpandedView).where(ReadingExpandedView.book_id == book_id)
         result = await self.db.scalars(stmt)
         return result.first()
@@ -57,13 +54,8 @@ class ReadingsRepository:
                 ReadingExpandedView.category_id == filters['category_id']
             )
 
-        # Note: shelve_id logic might need View update if not present, but keeping code structure
         if filters.get('shelve_id'):
-             # Assuming this column exists in View as implied by previous code,
-             # though I didn't verify it in the View definition recently.
-             # Based on previous file, it was trying to access it.
              pass
-             # conditions.append(ReadingExpandedView.shelve_id == filters['shelve_id'])
 
         if conditions:
             stmt = stmt.where(*conditions)

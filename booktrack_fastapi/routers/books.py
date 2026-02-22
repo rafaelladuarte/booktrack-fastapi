@@ -1,12 +1,9 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Query
 
-from booktrack_fastapi.core.database import get_session
-from booktrack_fastapi.core.security import get_current_user
-from booktrack_fastapi.models.users import User
+from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
 from booktrack_fastapi.schemas.books import (
     BookCreate,
     BookExpandedList,
@@ -22,8 +19,8 @@ router = APIRouter(prefix='/books', tags=['Books'])
 @router.get('', response_model=BookExpandedList, status_code=HTTPStatus.OK)
 async def list_book(
     filter_query: Annotated[BookFilter, Query()],
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    db: SessionDep,
+    current_user: CurrentUser,
 ):
     service = BooksService(db)
 
@@ -39,8 +36,8 @@ async def list_book(
 @router.get('/{book_id}', response_model=BookExpandedList, status_code=HTTPStatus.OK)
 async def list_book_by_id(
     book_id: int,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    db: SessionDep,
+    current_user: CurrentUser,
 ):
     service = BooksService(db)
 
@@ -51,8 +48,8 @@ async def list_book_by_id(
 @router.post('', status_code=HTTPStatus.CREATED)
 async def create_book(
     data: BookCreate,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    db: SessionDep,
+    current_user: CurrentUser,
 ):
     service = BooksService(db)
     await service.create(data=data)
@@ -63,8 +60,8 @@ async def create_book(
 async def update_book(
     book_id: int,
     data: BookUpdate,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    db: SessionDep,
+    current_user: CurrentUser,
 ):
     service = BooksService(db)
     await service.update_by_id(book_id, data)
@@ -74,8 +71,8 @@ async def update_book(
 @router.delete('/{book_id}', status_code=HTTPStatus.OK)
 async def delete_book_by_id(
     book_id: int,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    db: SessionDep,
+    current_user: CurrentUser,
 ):
     service = BooksService(db)
     await service.delete_by_id(book_id)

@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi import Request
+from fastapi.responses import JSONResponse
 
 from booktrack_fastapi.routers import (
     auth,
@@ -10,6 +12,10 @@ from booktrack_fastapi.routers import (
 )
 
 app = FastAPI(title='BookTrack API - Authentication Service')
+
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    return JSONResponse(status_code=404, content={"detail": "Recurso não encontrado"})
 
 # Rotas de autenticação (públicas)
 app.include_router(auth.router)

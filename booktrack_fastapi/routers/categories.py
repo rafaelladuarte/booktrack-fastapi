@@ -1,12 +1,9 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Query
 
-from booktrack_fastapi.core.database import get_session
-from booktrack_fastapi.core.security import get_current_user
-from booktrack_fastapi.models.users import User
+from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
 from booktrack_fastapi.schemas.categories import (
     CategoriesList,
     Category,
@@ -21,8 +18,8 @@ router = APIRouter(prefix='/categories', tags=['Categories'])
 @router.get('', response_model=CategoriesList, status_code=HTTPStatus.OK)
 async def list_categories(
     filter_query: Annotated[CategoryParentFilter, Query()],
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    db: SessionDep,
+    current_user: CurrentUser,
 ):
     service = CategoriesService(db)
 
@@ -56,8 +53,8 @@ async def list_categories(
 @router.get('/{category_id}', response_model=Category, status_code=HTTPStatus.OK)
 async def list_categories_by_id(
     category_id: int,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    db: SessionDep,
+    current_user: CurrentUser,
 ):
     service = CategoriesService(db)
 
@@ -68,8 +65,8 @@ async def list_categories_by_id(
 @router.post('', response_model=Category, status_code=HTTPStatus.CREATED)
 async def create_categorie(
     data: CategoryCreate,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    db: SessionDep,
+    current_user: CurrentUser,
 ):
     service = CategoriesService(db)
     item = await service.create(name=data.name, parent_id=data.parent_id)
