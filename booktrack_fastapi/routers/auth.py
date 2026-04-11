@@ -25,7 +25,10 @@ async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_session),
 ):
-    user = await session.scalar(select(User).where(User.username == form_data.username))
+    # O campo 'username' do formulário OAuth2 recebe o e-mail do usuário.
+    # Essa é uma limitação do protocolo OAuth2PasswordRequestForm, que define
+    # o campo como 'username' independentemente do identificador real usado.
+    user = await session.scalar(select(User).where(User.email == form_data.username))
 
     if not user:
         raise HTTPException(

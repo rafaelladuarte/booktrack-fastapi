@@ -37,6 +37,9 @@ class Books(Base):
         back_populates='books'
     )
 
+    author: Mapped['Authors'] = relationship()  # noqa: F821
+    category: Mapped['Categories'] = relationship()  # noqa: F821
+
     authors: Mapped[list['Authors']] = relationship(  # noqa: F821
         secondary=books_authors, back_populates='books'
     )

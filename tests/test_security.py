@@ -1,4 +1,3 @@
-
 from jwt import decode
 
 from booktrack_fastapi.core.security import (

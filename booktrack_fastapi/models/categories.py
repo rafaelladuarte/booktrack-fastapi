@@ -11,9 +11,7 @@ class Categories(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    parent_id: Mapped[int | None] = mapped_column(
-        ForeignKey('categories.id'), nullable=True
-    )
+    parent_id: Mapped[int | None] = mapped_column(ForeignKey('categories.id'), nullable=True)
 
     parent: Mapped['Categories | None'] = relationship(
         remote_side='Categories.id', back_populates='children'

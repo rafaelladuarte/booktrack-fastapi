@@ -21,6 +21,7 @@ from booktrack_fastapi.models.reading_status import ReadingStatus
 from booktrack_fastapi.models.readings import Readings
 from booktrack_fastapi.models.shelves import Shelves
 from booktrack_fastapi.models.tags import Tags
+from booktrack_fastapi.models.users import User
 
 from .base import Base
 
@@ -40,4 +41,5 @@ __all__ = [
     'Categories',
     'Books',
     'Readings',
+    'User',
 ]

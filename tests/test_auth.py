@@ -1,25 +1,26 @@
 from http import HTTPStatus
 
+from httpx import AsyncClient
 from jwt import decode
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.core.security import SECRET_KEY, get_password_hash
 from booktrack_fastapi.models.users import User
 
 
-def test_auth_token_success(client, session):
+async def test_auth_token_success(async_client: AsyncClient, async_session: AsyncSession):
     """Testa login bem-sucedido com retorno de access_token e refresh_token."""
-
-    # Cria um usuário de teste
     user = User(
         username='testuser',
         email='test@example.com',
         password=get_password_hash('testpassword'),
     )
-    session.add(user)
-    session.commit()
+    async_session.add(user)
+    await async_session.commit()
 
-    # Faz login
-    response = client.post(
+    # O campo 'username' do formulário OAuth2 recebe o e-mail do usuário.
+    # Isso é uma limitação do protocolo OAuth2PasswordRequestForm — ver BT-002.
+    response = await async_client.post(
         '/auth/token',
         data={'username': 'test@example.com', 'password': 'testpassword'},
     )
@@ -31,7 +32,6 @@ def test_auth_token_success(client, session):
     assert 'refresh_token' in data
     assert data['token_type'] == 'bearer'
 
-    # Verifica se os tokens são válidos
     access_payload = decode(data['access_token'], SECRET_KEY, algorithms=['HS256'])
     refresh_payload = decode(data['refresh_token'], SECRET_KEY, algorithms=['HS256'])
 
@@ -41,9 +41,9 @@ def test_auth_token_success(client, session):
     assert refresh_payload['type'] == 'refresh'
 
 
-def test_auth_token_invalid_credentials(client, session):
+async def test_auth_token_invalid_credentials(async_client: AsyncClient):
     """Testa login com credenciais inválidas."""
-    response = client.post(
+    response = await async_client.post(
         '/auth/token',
         data={'username': 'wrong@example.com', 'password': 'wrongpassword'},
     )
@@ -52,20 +52,17 @@ def test_auth_token_invalid_credentials(client, session):
     assert response.json() == {'detail': 'Email ou senha incorretos'}
 
 
-def test_auth_token_wrong_password(client, session):
+async def test_auth_token_wrong_password(async_client: AsyncClient, async_session: AsyncSession):
     """Testa login com senha incorreta."""
-
-    # Cria um usuário de teste
     user = User(
         username='testuser',
         email='test@example.com',
         password=get_password_hash('correctpassword'),
     )
-    session.add(user)
-    session.commit()
+    async_session.add(user)
+    await async_session.commit()
 
-    # Tenta login com senha errada
-    response = client.post(
+    response = await async_client.post(
         '/auth/token',
         data={'username': 'test@example.com', 'password': 'wrongpassword'},
     )
@@ -74,28 +71,24 @@ def test_auth_token_wrong_password(client, session):
     assert response.json() == {'detail': 'Email ou senha incorretos'}
 
 
-def test_auth_refresh_success(client, session):
+async def test_auth_refresh_success(async_client: AsyncClient, async_session: AsyncSession):
     """Testa renovação de token com refresh token válido."""
-
-    # Cria um usuário de teste
     user = User(
         username='testuser',
         email='test@example.com',
         password=get_password_hash('testpassword'),
     )
-    session.add(user)
-    session.commit()
+    async_session.add(user)
+    await async_session.commit()
 
-    # Faz login para obter tokens
-    login_response = client.post(
+    login_response = await async_client.post(
         '/auth/token',
         data={'username': 'test@example.com', 'password': 'testpassword'},
     )
     tokens = login_response.json()
     refresh_token = tokens['refresh_token']
 
-    # Usa o refresh token para obter novos tokens
-    response = client.post(
+    response = await async_client.post(
         '/auth/refresh',
         headers={'Authorization': f'Bearer {refresh_token}'},
     )
@@ -107,13 +100,8 @@ def test_auth_refresh_success(client, session):
     assert 'refresh_token' in data
     assert data['token_type'] == 'bearer'
 
-    # Verifica se os novos tokens são válidos
-    new_access_payload = decode(
-        data['access_token'], SECRET_KEY, algorithms=['HS256']
-    )
-    new_refresh_payload = decode(
-        data['refresh_token'], SECRET_KEY, algorithms=['HS256']
-    )
+    new_access_payload = decode(data['access_token'], SECRET_KEY, algorithms=['HS256'])
+    new_refresh_payload = decode(data['refresh_token'], SECRET_KEY, algorithms=['HS256'])
 
     assert new_access_payload['sub'] == 'test@example.com'
     assert new_access_payload['type'] == 'access'
@@ -121,28 +109,26 @@ def test_auth_refresh_success(client, session):
     assert new_refresh_payload['type'] == 'refresh'
 
 
-def test_auth_refresh_with_access_token(client, session):
+async def test_auth_refresh_with_access_token(
+    async_client: AsyncClient, async_session: AsyncSession
+):
     """Testa que não é possível usar access token na rota de refresh."""
-
-    # Cria um usuário de teste
     user = User(
         username='testuser',
         email='test@example.com',
         password=get_password_hash('testpassword'),
     )
-    session.add(user)
-    session.commit()
+    async_session.add(user)
+    await async_session.commit()
 
-    # Faz login para obter tokens
-    login_response = client.post(
+    login_response = await async_client.post(
         '/auth/token',
         data={'username': 'test@example.com', 'password': 'testpassword'},
     )
     tokens = login_response.json()
     access_token = tokens['access_token']
 
-    # Tenta usar access token na rota de refresh (deve falhar)
-    response = client.post(
+    response = await async_client.post(
         '/auth/refresh',
         headers={'Authorization': f'Bearer {access_token}'},
     )
@@ -151,9 +137,9 @@ def test_auth_refresh_with_access_token(client, session):
     assert 'Token inválido: esperado tipo refresh' in response.json()['detail']
 
 
-def test_auth_refresh_invalid_token(client):
+async def test_auth_refresh_invalid_token(async_client: AsyncClient):
     """Testa renovação com token inválido."""
-    response = client.post(
+    response = await async_client.post(
         '/auth/refresh',
         headers={'Authorization': 'Bearer invalid-token'},
     )

@@ -1,11 +1,11 @@
 from sqlalchemy import delete, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from booktrack_fastapi.core.dependencies import SessionDep
 from booktrack_fastapi.models.authors import Authors
 
 
 class AuthorsRepository:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: SessionDep):
         self.db = db
 
     async def get_all(self):

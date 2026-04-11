@@ -10,10 +10,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.core.database import get_session
+from booktrack_fastapi.core.settings import Settings
 from booktrack_fastapi.models.users import User
 
 # Configurações de segurança
-SECRET_KEY = 'your-secret-key'
+# SECRET_KEY é lida exclusivamente via variável de ambiente (arquivo .env)
+SECRET_KEY = Settings().SECRET_KEY
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutos
 REFRESH_TOKEN_EXPIRE_DAYS = 7  # 7 dias
@@ -32,9 +34,7 @@ def create_access_token(data: dict) -> str:
         Token JWT codificado como string
     """
     to_encode = data.copy()
-    expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({'exp': expire, 'type': 'access'})
     encoded_jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -51,9 +51,7 @@ def create_refresh_token(data: dict) -> str:
         Token JWT codificado como string
     """
     to_encode = data.copy()
-    expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
-        days=REFRESH_TOKEN_EXPIRE_DAYS
-    )
+    expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     to_encode.update({'exp': expire, 'type': 'refresh'})
     encoded_jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
