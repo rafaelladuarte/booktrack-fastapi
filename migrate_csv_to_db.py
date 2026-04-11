@@ -18,12 +18,12 @@ from booktrack_fastapi.models.readings import Readings
 from booktrack_fastapi.models.shelves import Shelves
 from booktrack_fastapi.models.tags import Tags
 
-REPORT_FILE = "relatorio_antigravity.md"
-CSV_FILE = "data/minha-biblioteca-leituras.csv"
+REPORT_FILE = 'relatorio_antigravity.md'
+CSV_FILE = 'data/minha-biblioteca-leituras.csv'
 
 
 def clean_val(val):
-    if pd.isna(val) or val == "" or str(val).strip() == "-":
+    if pd.isna(val) or val == '' or str(val).strip() == '-':
         return None
     return str(val).strip()
 
@@ -35,19 +35,19 @@ def parse_date(date_str):
     # Expected standard: DD/MM/YYYY or YYYY-MM-DD
     try:
         # Try DD/MM/YYYY
-        return datetime.strptime(date_str, "%d/%m/%Y").date()
+        return datetime.strptime(date_str, '%d/%m/%Y').date()
     except ValueError:
         pass
 
     try:
         # Try MM/YYYY -> Default to 01/MM/YYYY
-        return datetime.strptime(date_str, "%m/%Y").date()
+        return datetime.strptime(date_str, '%m/%Y').date()
     except ValueError:
         pass
 
     try:
         # Try YYYY
-        return datetime.strptime(date_str, "%Y").date()
+        return datetime.strptime(date_str, '%Y').date()
     except ValueError:
         pass
 
@@ -66,21 +66,21 @@ def get_or_create(session, model, **kwargs):
 
 
 def main():
-    print("Iniciando migração...")
+    print('Iniciando migração...')
 
     try:
         df = pd.read_csv(CSV_FILE)
     except Exception as e:
-        print(f"Erro ao ler CSV: {e}")
+        print(f'Erro ao ler CSV: {e}')
         return
 
     report_lines = [
-        "# Relatório Antigravity de Migração",
-        "",
-        "## Resumo de Erros",
-        "",
-        "| Linha | Erro | Detalhes | Sugestão |",
-        "|-------|------|----------|----------|",
+        '# Relatório Antigravity de Migração',
+        '',
+        '## Resumo de Erros',
+        '',
+        '| Linha | Erro | Detalhes | Sugestão |',
+        '|-------|------|----------|----------|',
     ]
 
     errors_count = 0
@@ -113,9 +113,7 @@ def main():
                         origin = clean_val(row.get('Origem'))
 
                         # Check existance by Name
-                        author = session.scalar(
-                            select(Authors).where(Authors.name == author_name)
-                        )
+                        author = session.scalar(select(Authors).where(Authors.name == author_name))
                         if not author:
                             author = Authors(
                                 name=author_name, gender=gender, country_of_origin=origin
@@ -150,9 +148,7 @@ def main():
                     final_category = None
 
                     if group_name:
-                        group = get_or_create(
-                            session, Categories, name=group_name, parent_id=None
-                        )
+                        group = get_or_create(session, Categories, name=group_name, parent_id=None)
                         final_category = group
 
                         if genre_name:
@@ -174,16 +170,14 @@ def main():
                         # Or verify if nullable. Readings.status_id is ForeignKey,
                         # likely not nullable.
                         # Let's hope it's in the CSV or we fail row.
-                        status_name = "Desconhecido"
+                        status_name = 'Desconhecido'
 
-                    status = get_or_create(
-                        session, ReadingStatus, name=status_name
-                    )
+                    status = get_or_create(session, ReadingStatus, name=status_name)
 
                     # 7. Book Identity
                     book_title = clean_val(row.get('Name'))
                     if not book_title:
-                        raise ValueError("Título do livro (Name) está vazio.")
+                        raise ValueError('Título do livro (Name) está vazio.')
 
                     # Check for existing book
                     # We'll use Title + Author as unique identifier for this migration logic
@@ -222,7 +216,7 @@ def main():
                             collection_id=collection.id if collection else None,
                             format_id=fmt.id if fmt else None,
                             category_id=final_category.id if final_category else None,
-                            author_id=author.id if author else None
+                            author_id=author.id if author else None,
                         )
                         session.add(book)
                         session.flush()
@@ -252,7 +246,7 @@ def main():
                         personal_goal=personal_goal,
                         club_name=club_name,
                         club_date=club_date,
-                        pages_read=None  # CSV doesn't specify progress, just total pages in Book
+                        pages_read=None,  # CSV doesn't specify progress, just total pages in Book
                     )
                     session.add(reading)
                     session.flush()
@@ -286,26 +280,26 @@ def main():
                 error_msg = str(e)
                 error_type = type(e).__name__
                 # Basic suggestion logic
-                suggestion = "Verificar dados da linha."
-                if "IntegrityError" in error_type:
-                    suggestion = "Violação de constraint (ex: duplicidade ou FK inexistente)."
-                elif "ValueError" in error_type:
-                    suggestion = "Formato de dados inválido (ex: data ou número)."
+                suggestion = 'Verificar dados da linha.'
+                if 'IntegrityError' in error_type:
+                    suggestion = 'Violação de constraint (ex: duplicidade ou FK inexistente).'
+                elif 'ValueError' in error_type:
+                    suggestion = 'Formato de dados inválido (ex: data ou número).'
 
-                report_lines.append(f"| {line_num} | {error_type} | {error_msg} | {suggestion} |")
+                report_lines.append(f'| {line_num} | {error_type} | {error_msg} | {suggestion} |')
 
         session.commit()
 
     # Write Report
-    with open(REPORT_FILE, "w", encoding="utf-8") as f:
+    with open(REPORT_FILE, 'w', encoding='utf-8') as f:
         for line in report_lines:
-            f.write(line + "\n")
+            f.write(line + '\n')
 
-        f.write(f"\n\n**Resumo Final**:\n- Sucessos: {success_count}\n- Falhas: {errors_count}")
+        f.write(f'\n\n**Resumo Final**:\n- Sucessos: {success_count}\n- Falhas: {errors_count}')
 
-    print(f"Migração concluída. Sucessos: {success_count}, Falhas: {errors_count}")
-    print(f"Relatório gerado em: {REPORT_FILE}")
+    print(f'Migração concluída. Sucessos: {success_count}, Falhas: {errors_count}')
+    print(f'Relatório gerado em: {REPORT_FILE}')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

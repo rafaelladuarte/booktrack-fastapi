@@ -13,12 +13,12 @@ async def test_list_categories_no_filter(
     """
     Garante que buscar sem filtros traga todas as categorias cadastradas no banco.
     """
-    parent = Categories(name="Global_Category")
+    parent = Categories(name='Global_Category')
     async_session.add(parent)
     await async_session.commit()
     await async_session.refresh(parent)
 
-    child = Categories(name="Local_Category", parent_id=parent.id)
+    child = Categories(name='Local_Category', parent_id=parent.id)
     async_session.add(child)
     await async_session.commit()
 
@@ -35,15 +35,15 @@ async def test_list_categories_filter_parent_id(
     Cobre o caso de filtro via `parent_id`, retornando
     apenas categorias filhas do parent determinado.
     """
-    parent1 = Categories(name="Parent_A")
-    parent2 = Categories(name="Parent_B")
+    parent1 = Categories(name='Parent_A')
+    parent2 = Categories(name='Parent_B')
     async_session.add_all([parent1, parent2])
     await async_session.commit()
     await async_session.refresh(parent1)
     await async_session.refresh(parent2)
 
-    child1 = Categories(name="Child_A", parent_id=parent1.id)
-    child2 = Categories(name="Child_B", parent_id=parent2.id)
+    child1 = Categories(name='Child_A', parent_id=parent1.id)
+    child2 = Categories(name='Child_B', parent_id=parent2.id)
     async_session.add_all([child1, child2])
     await async_session.commit()
 
@@ -52,7 +52,7 @@ async def test_list_categories_filter_parent_id(
     data = response.json()['data']
 
     assert len(data) == 1
-    assert data[0]['name'] == "Child_A"
+    assert data[0]['name'] == 'Child_A'
     assert data[0]['parent_id'] == parent1.id
 
 

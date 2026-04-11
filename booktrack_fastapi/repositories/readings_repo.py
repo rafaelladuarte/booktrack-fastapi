@@ -21,38 +21,46 @@ class ReadingsRepository:
                 selectinload(Books.collection),
                 selectinload(Books.format),
                 selectinload(Books.category),
-            )
+            ),
         )
         result = await self.db.scalars(stmt)
         return result.all()
 
     async def get_by_id(self, reading_id: int):
-        stmt = select(Readings).where(Readings.id == reading_id).options(
-            selectinload(Readings.status),
-            selectinload(Readings.tags),
-            selectinload(Readings.shelves),
-            selectinload(Readings.book).options(
-                selectinload(Books.author),
-                selectinload(Books.publisher),
-                selectinload(Books.collection),
-                selectinload(Books.format),
-                selectinload(Books.category),
+        stmt = (
+            select(Readings)
+            .where(Readings.id == reading_id)
+            .options(
+                selectinload(Readings.status),
+                selectinload(Readings.tags),
+                selectinload(Readings.shelves),
+                selectinload(Readings.book).options(
+                    selectinload(Books.author),
+                    selectinload(Books.publisher),
+                    selectinload(Books.collection),
+                    selectinload(Books.format),
+                    selectinload(Books.category),
+                ),
             )
         )
         result = await self.db.scalars(stmt)
         return result.first()
 
     async def get_by_book_id(self, book_id: int):
-        stmt = select(Readings).where(Readings.book_id == book_id).options(
-            selectinload(Readings.status),
-            selectinload(Readings.tags),
-            selectinload(Readings.shelves),
-            selectinload(Readings.book).options(
-                selectinload(Books.author),
-                selectinload(Books.publisher),
-                selectinload(Books.collection),
-                selectinload(Books.format),
-                selectinload(Books.category),
+        stmt = (
+            select(Readings)
+            .where(Readings.book_id == book_id)
+            .options(
+                selectinload(Readings.status),
+                selectinload(Readings.tags),
+                selectinload(Readings.shelves),
+                selectinload(Readings.book).options(
+                    selectinload(Books.author),
+                    selectinload(Books.publisher),
+                    selectinload(Books.collection),
+                    selectinload(Books.format),
+                    selectinload(Books.category),
+                ),
             )
         )
         result = await self.db.scalars(stmt)
@@ -90,7 +98,7 @@ class ReadingsRepository:
                 selectinload(Books.collection),
                 selectinload(Books.format),
                 selectinload(Books.category),
-            )
+            ),
         )
         conditions = []
 
@@ -116,9 +124,7 @@ class ReadingsRepository:
         book_id: int,
         parameters: dict,
     ):
-        stmt = (
-            update(Readings).where(Readings.book_id == book_id).values(**parameters)
-        )
+        stmt = update(Readings).where(Readings.book_id == book_id).values(**parameters)
         await self.db.execute(stmt)
         await self.db.commit()
 

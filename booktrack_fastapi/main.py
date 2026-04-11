@@ -15,7 +15,7 @@ app = FastAPI(title='BookTrack API - Authentication Service')
 
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc):
-    return JSONResponse(status_code=404, content={"detail": "Recurso não encontrado"})
+    return JSONResponse(status_code=404, content={'detail': 'Recurso não encontrado'})
 
 
 # Rotas de autenticação (públicas)

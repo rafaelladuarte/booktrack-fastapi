@@ -58,9 +58,7 @@ async def async_session():
         await conn.run_sync(Base.metadata.create_all)
         await conn.run_sync(table_registry.metadata.create_all)
 
-    session_maker = async_sessionmaker(
-        engine, class_=AsyncSession, expire_on_commit=False
-    )
+    session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     async with session_maker() as session:
         yield session
@@ -80,9 +78,7 @@ async def async_client(async_session):
         yield async_session
 
     app.dependency_overrides[get_session] = get_session_override
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url='http://test'
-    ) as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url='http://test') as client:
         yield client
     app.dependency_overrides.clear()
 

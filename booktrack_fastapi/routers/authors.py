@@ -63,9 +63,7 @@ async def update_author(
             status_code=HTTPStatus.NOT_FOUND,
             detail=f'Author_id {author_id} not found.',
         )
-    return await repo.update_by_id(
-        author_id, data.model_dump(exclude_unset=True)
-    )
+    return await repo.update_by_id(author_id, data.model_dump(exclude_unset=True))
 
 
 @router.delete('/{author_id}', status_code=HTTPStatus.NO_CONTENT)

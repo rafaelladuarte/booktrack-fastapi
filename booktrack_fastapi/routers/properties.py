@@ -24,24 +24,18 @@ async def list_collections(
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=Collections, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=Collections, repository_cls=PropertiesRepository)
     items = await service.list_all()
     return {'data': items}
 
 
-@router.post(
-    '/collections', response_model=PropertyCreate, status_code=HTTPStatus.CREATED
-)
+@router.post('/collections', response_model=PropertyCreate, status_code=HTTPStatus.CREATED)
 async def create_collection(
     name: str,
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=Collections, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=Collections, repository_cls=PropertiesRepository)
     await service.create(name=name)
     return {'detail': 'Collection created successfully!'}
 
@@ -51,9 +45,7 @@ async def list_publisher(
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=Publishers, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=Publishers, repository_cls=PropertiesRepository)
     items = await service.list_all()
     return {'data': items}
 
@@ -64,9 +56,7 @@ async def create_publisher(
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=Publishers, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=Publishers, repository_cls=PropertiesRepository)
     await service.create(name=name)
     return {'detail': 'Publisher created successfully!'}
 
@@ -76,9 +66,7 @@ async def list_tags(
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=Tags, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=Tags, repository_cls=PropertiesRepository)
     items = await service.list_all()
     return {'data': items}
 
@@ -89,9 +77,7 @@ async def create_tags(
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=Tags, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=Tags, repository_cls=PropertiesRepository)
     await service.create(name=name)
     return {'detail': 'Tag created successfully!'}
 
@@ -101,23 +87,17 @@ async def list_shelves(
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=Shelves, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=Shelves, repository_cls=PropertiesRepository)
     items = await service.list_all()
     return {'data': items}
 
 
-@router.get(
-    '/reading_status', response_model=PropertyList, status_code=HTTPStatus.OK
-)
+@router.get('/reading_status', response_model=PropertyList, status_code=HTTPStatus.OK)
 async def list_reading_status(
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=ReadingStatus, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=ReadingStatus, repository_cls=PropertiesRepository)
     items = await service.list_all()
     return {'data': items}
 
@@ -127,8 +107,6 @@ async def list_formats(
     db: SessionDep,
     current_user: CurrentUser,
 ):
-    service = PropertiesService(
-        db=db, model=Formats, repository_cls=PropertiesRepository
-    )
+    service = PropertiesService(db=db, model=Formats, repository_cls=PropertiesRepository)
     items = await service.list_all()
     return {'data': items}

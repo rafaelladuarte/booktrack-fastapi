@@ -52,9 +52,7 @@ async def test_auth_token_invalid_credentials(async_client: AsyncClient):
     assert response.json() == {'detail': 'Email ou senha incorretos'}
 
 
-async def test_auth_token_wrong_password(
-    async_client: AsyncClient, async_session: AsyncSession
-):
+async def test_auth_token_wrong_password(async_client: AsyncClient, async_session: AsyncSession):
     """Testa login com senha incorreta."""
     user = User(
         username='testuser',
@@ -73,9 +71,7 @@ async def test_auth_token_wrong_password(
     assert response.json() == {'detail': 'Email ou senha incorretos'}
 
 
-async def test_auth_refresh_success(
-    async_client: AsyncClient, async_session: AsyncSession
-):
+async def test_auth_refresh_success(async_client: AsyncClient, async_session: AsyncSession):
     """Testa renovação de token com refresh token válido."""
     user = User(
         username='testuser',

@@ -12,9 +12,7 @@ from booktrack_fastapi.models.readings import Readings
 class TestReadingsRoutes:
     """Suite de testes para as rotas de Readings."""
 
-    async def test_list_readings_empty(
-        self, async_client: AsyncClient, auth_headers: dict
-    ):
+    async def test_list_readings_empty(self, async_client: AsyncClient, auth_headers: dict):
         """
         Test GET /readings - Deve retornar lista vazia quando não há leituras.
         """
@@ -117,16 +115,12 @@ class TestReadingsRoutes:
         assert reading.pages_read == 250
         assert reading.personal_goal == 'Ler 50 páginas por dia'
 
-    async def test_update_reading_not_found(
-        self, async_client: AsyncClient, auth_headers: dict
-    ):
+    async def test_update_reading_not_found(self, async_client: AsyncClient, auth_headers: dict):
         """
         Test PUT /readings/{book_id} - Deve retornar 404 para book_id inexistente.
         """
         update_data = {'pages_read': 100}
-        response = await async_client.put(
-            '/readings/99999', json=update_data, headers=auth_headers
-        )
+        response = await async_client.put('/readings/99999', json=update_data, headers=auth_headers)
 
         assert response.status_code == HTTPStatus.NOT_FOUND
 
@@ -184,11 +178,7 @@ class TestReadingsRoutes:
         await async_session.refresh(status)
         await async_session.refresh(book)
 
-        payload = {
-            "book_id": book.id,
-            "status_id": status.id,
-            "pages_read": 10
-        }
+        payload = {'book_id': book.id, 'status_id': status.id, 'pages_read': 10}
 
         response = await async_client.post('/readings', json=payload, headers=auth_headers)
 
@@ -205,10 +195,7 @@ class TestReadingsRoutes:
         """
         Test POST /readings - Deve retornar 404 se book_id for inexistente.
         """
-        payload = {
-            "book_id": 99999,
-            "status_id": 1
-        }
+        payload = {'book_id': 99999, 'status_id': 1}
         response = await async_client.post('/readings', json=payload, headers=auth_headers)
 
         assert response.status_code == HTTPStatus.NOT_FOUND
@@ -218,9 +205,6 @@ class TestReadingsRoutes:
         """
         Test POST /readings - Deve retornar 401 faltando Auth Bearer.
         """
-        payload = {
-            "book_id": 1,
-            "status_id": 1
-        }
+        payload = {'book_id': 1, 'status_id': 1}
         response = await async_client.post('/readings', json=payload)
         assert response.status_code == HTTPStatus.UNAUTHORIZED

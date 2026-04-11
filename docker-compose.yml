@@ -16,10 +16,22 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U rafaella -d booktrack"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d booktrack"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 5
+
+  api:
+    build: .
+    container_name: booktrack-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    restart: on-failure
 
   pgadmin:
     image: dpage/pgadmin4

@@ -36,40 +36,26 @@ class BookList(BaseModel):
 
 class BookUpdate(BaseModel):
     publisher_id: Optional[int] = Field(None, description='Atualizar ID da editora')
-    collection_id: Optional[int] = Field(
-        None, description='Atualizar ID da coleção'
-    )
+    collection_id: Optional[int] = Field(None, description='Atualizar ID da coleção')
     format_id: Optional[int] = Field(None, description='Atualizar ID do formato')
     author_id: Optional[int] = Field(None, description='Atualizar ID do escritor')
-    category_id: Optional[int] = Field(
-        None, description='Atualizar ID da categoria'
-    )
+    category_id: Optional[int] = Field(None, description='Atualizar ID da categoria')
     cover_url: Optional[str] = Field(None, description='Atualizar URL da capa')
     title: Optional[str] = Field(None, description='Atualizar título')
     original_publication_year: Optional[int] = Field(
         None, description='Atualizar ano de publicação original'
     )
-    total_pages: Optional[int] = Field(
-        None, description='Atualizar número total de páginas'
-    )
+    total_pages: Optional[int] = Field(None, description='Atualizar número total de páginas')
 
 
 class BookFilter(BaseModel):
-    title: Optional[str] = Field(
-        None, description='Filtrar peli título completo do livro'
-    )
-    year: Optional[int] = Field(
-        None, description='FIltrar pelo ano de publicação original'
-    )
+    title: Optional[str] = Field(None, description='Filtrar peli título completo do livro')
+    year: Optional[int] = Field(None, description='FIltrar pelo ano de publicação original')
     publish_id: Optional[int] = Field(None, description='Filtrar por ID da editora')
-    collection_id: Optional[int] = Field(
-        None, description='Filtrar por ID da coleção'
-    )
+    collection_id: Optional[int] = Field(None, description='Filtrar por ID da coleção')
     format_id: Optional[int] = Field(None, description='Filtrar por ID do formato')
     author_id: Optional[int] = Field(None, description='Filtrar por ID do escritor')
-    category_id: Optional[int] = Field(
-        None, description='Filtrar por ID da categoria'
-    )
+    category_id: Optional[int] = Field(None, description='Filtrar por ID da categoria')
     shelve_id: Optional[int] = Field(None, description='Filtrar por ID da estante')
 
 

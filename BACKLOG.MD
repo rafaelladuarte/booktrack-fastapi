@@ -124,7 +124,7 @@ Não existe endpoint `POST /readings`. A criação de uma leitura só é possív
 
 ### BT-006 — Implementar filtro shelve_id em books_repo.py
 **Prioridade:** 🟡 Médio  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivo:** `booktrack_fastapi/repositories/books_repo.py`
 
 **Problema:**  
@@ -265,7 +265,7 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 | BT-003 | Corrigir fixtures async em test_readings.py | 🟡 Médio | 1 | ✅ |
 | BT-004 | Implementar categories_service.list_by_filter() | 🟡 Médio | 2 | ✅ |
 | BT-005 | Implementar endpoint POST /readings | 🟡 Médio | 2 | ✅ |
-| BT-006 | Implementar filtro shelve_id em books_repo.py | 🟡 Médio | 2 | ⬜ |
+| BT-006 | Implementar filtro shelve_id em books_repo.py | 🟡 Médio | 2 | ✅ |
 | BT-007 | Implementar Dockerfile | 🟠 Médio-baixo | 3 | ⬜ |
 | BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ⬜ |
 | BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ⬜ |

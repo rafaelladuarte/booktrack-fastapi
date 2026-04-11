@@ -42,9 +42,7 @@ class CategoriesRepository:
         return result.all()
 
     async def get_by_name_and_parent(self, name: str, parent_id: int = None):
-        stmt = select(Categories).where(
-            Categories.parent_id == parent_id, Categories.name == name
-        )
+        stmt = select(Categories).where(Categories.parent_id == parent_id, Categories.name == name)
         result = await self.db.scalars(stmt)
         return result.all()
 
