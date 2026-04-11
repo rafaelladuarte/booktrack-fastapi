@@ -10,10 +10,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from booktrack_fastapi.core.database import get_session
+from booktrack_fastapi.core.settings import Settings
 from booktrack_fastapi.models.users import User
 
 # Configurações de segurança
-SECRET_KEY = 'your-secret-key'
+# SECRET_KEY é lida exclusivamente via variável de ambiente (arquivo .env)
+SECRET_KEY = Settings().SECRET_KEY
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutos
 REFRESH_TOKEN_EXPIRE_DAYS = 7  # 7 dias

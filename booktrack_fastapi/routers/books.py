@@ -11,7 +11,6 @@ from booktrack_fastapi.schemas.books import (
     BookUpdate,
 )
 from booktrack_fastapi.services.books_service import BooksService
-from booktrack_fastapi.utility.tools import expand_book_row
 
 router = APIRouter(prefix='/books', tags=['Books'])
 
@@ -30,7 +29,7 @@ async def list_book(
     else:
         items = await service.list_by_filter(filter_query)
 
-    return {'data': [expand_book_row(item) for item in items]}
+    return {'data': items}
 
 
 @router.get('/{book_id}', response_model=BookExpandedList, status_code=HTTPStatus.OK)
@@ -42,7 +41,7 @@ async def list_book_by_id(
     service = BooksService(db)
 
     item = await service.get_by_id(book_id=book_id)
-    return {'data': [expand_book_row(item)]}
+    return {'data': [item]}
 
 
 @router.post('', status_code=HTTPStatus.CREATED)

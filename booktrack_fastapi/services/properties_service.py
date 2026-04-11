@@ -42,6 +42,6 @@ class PropertiesService:
         return obj
 
     async def list_by_filter(self, **filters):
-         # Assuming repo update didn't include filtered search, but keeping structure if needed
+        # Assuming repo update didn't include filtered search, but keeping structure if needed
         pass
-         # return await self.repo.get_filtered(**filters)
+        # return await self.repo.get_filtered(**filters)

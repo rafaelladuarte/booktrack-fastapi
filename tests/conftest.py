@@ -2,30 +2,28 @@ from contextlib import contextmanager
 from datetime import datetime
 
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import create_engine, event
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from booktrack_fastapi.core.database import get_session
+from booktrack_fastapi.core.security import get_password_hash
 from booktrack_fastapi.main import app
 from booktrack_fastapi.models.base import Base
-from booktrack_fastapi.models.users import table_registry
+from booktrack_fastapi.models.users import User, table_registry
 
-
-@pytest.fixture
-def client(session):
-    def get_session_override():
-        return session
-
-    app.dependency_overrides[get_session] = get_session_override
-    with TestClient(app) as client:
-        yield client
-    app.dependency_overrides.clear()
+# ---------------------------------------------------------------------------
+# Fixtures SÍNCRONAS — usadas por test_properties.py (sem rotas async)
+# ---------------------------------------------------------------------------
 
 
 @pytest.fixture
 def session():
+    """Sessão síncrona SQLite in-memory para testes de modelo direto."""
     engine = create_engine(
         'sqlite:///:memory:',
         connect_args={'check_same_thread': False},
@@ -39,8 +37,91 @@ def session():
 
     Base.metadata.drop_all(engine)
     table_registry.metadata.drop_all(engine)
-
     engine.dispose()
+
+
+# ---------------------------------------------------------------------------
+# Fixtures ASSÍNCRONAS — usadas por test_auth.py e test_readings.py
+# ---------------------------------------------------------------------------
+
+
+@pytest_asyncio.fixture
+async def async_session():
+    """AsyncSession SQLite in-memory para testes assíncronos."""
+    engine = create_async_engine(
+        'sqlite+aiosqlite:///:memory:',
+        connect_args={'check_same_thread': False},
+        poolclass=StaticPool,
+    )
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(table_registry.metadata.create_all)
+
+    session_maker = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
+
+    async with session_maker() as session:
+        yield session
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(table_registry.metadata.drop_all)
+
+    await engine.dispose()
+
+
+@pytest_asyncio.fixture
+async def async_client(async_session):
+    """AsyncClient com sessão async para testes de rotas assíncronas."""
+
+    async def get_session_override():
+        yield async_session
+
+    app.dependency_overrides[get_session] = get_session_override
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url='http://test'
+    ) as client:
+        yield client
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def client(async_session):
+    """TestClient síncrono com sessão async — compatível com endpoints async."""
+
+    async def get_session_override():
+        yield async_session
+
+    app.dependency_overrides[get_session] = get_session_override
+    with TestClient(app) as client:
+        yield client
+    app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def auth_headers(async_session, async_client):
+    """Cria um usuário de teste e retorna headers com token de autenticação válido."""
+    user = User(
+        username='testuser_auth',
+        email='auth@test.com',
+        password=get_password_hash('testpassword'),
+    )
+    async_session.add(user)
+    await async_session.commit()
+
+    response = await async_client.post(
+        '/auth/token',
+        data={'username': 'auth@test.com', 'password': 'testpassword'},
+    )
+    token = response.json()['access_token']
+    return {'Authorization': f'Bearer {token}'}
+
+
+# ---------------------------------------------------------------------------
+# Utilitário — mock de timestamps
+# ---------------------------------------------------------------------------
 
 
 @contextmanager
@@ -52,9 +133,7 @@ def _mock_db_time(*, model, time=datetime(2024, 1, 1)):
             target.updated_at = time
 
     event.listen(model, 'before_insert', fake_time_handler)
-
     yield time
-
     event.remove(model, 'before_insert', fake_time_handler)
 
 

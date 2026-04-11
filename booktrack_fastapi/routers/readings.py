@@ -10,7 +10,6 @@ from booktrack_fastapi.schemas.readings import (
     ReadingUpdate,
 )
 from booktrack_fastapi.services.readings_service import ReadingsService
-from booktrack_fastapi.utility.tools import expand_reading_row
 
 router = APIRouter(prefix='/readings', tags=['Readings'])
 
@@ -29,7 +28,7 @@ async def list_readings(
     else:
         items = await service.list_by_filter(filter_query)
 
-    return {'data': [expand_reading_row(item) for item in items]}
+    return {'data': items}
 
 
 @router.put(

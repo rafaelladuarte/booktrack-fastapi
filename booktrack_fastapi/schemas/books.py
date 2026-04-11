@@ -1,9 +1,11 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Book(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     title: str
     original_publication_year: int
@@ -72,49 +74,40 @@ class BookFilter(BaseModel):
 
 
 class AuthorSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
     gender: Optional[str] = None
     country: Optional[str] = None
 
-    class Config:
-        from_attributes = True
-
 
 class PublisherSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
-
-    class Config:
-        from_attributes = True
 
 
 class CollectionSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
-
-    class Config:
-        from_attributes = True
 
 
 class FormatSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
 
-    class Config:
-        from_attributes = True
-
 
 class CategorySchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
     parent_id: Optional[int] = None
 
-    class Config:
-        from_attributes = True
-
 
 class BookExpanded(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     title: str
     original_publication_year: Optional[int] = None
@@ -126,9 +119,6 @@ class BookExpanded(BaseModel):
     collection: Optional[CollectionSchema] = None
     format: Optional[FormatSchema] = None
     category: Optional[CategorySchema] = None
-
-    class Config:
-        from_attributes = True
 
 
 class BookExpandedList(BaseModel):
