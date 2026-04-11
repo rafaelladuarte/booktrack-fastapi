@@ -25,11 +25,15 @@ WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Copia o código da aplicação
+# Copia o código da aplicação, arquivos de migração e scripts
 COPY booktrack_fastapi ./booktrack_fastapi
+COPY migrations ./migrations
+COPY scripts ./scripts
+COPY alembic.ini .
 
 # Cria usuário não-root por segurança
 RUN adduser --disabled-password --gecos '' booktrack
+RUN chown -R booktrack:booktrack /app
 USER booktrack
 
 EXPOSE 8000

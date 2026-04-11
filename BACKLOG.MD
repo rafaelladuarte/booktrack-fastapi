@@ -145,7 +145,7 @@ O schema `BookFilter` possui o campo `shelve_id`, mas o repositório ignora esse
 
 ### BT-007 — Implementar Dockerfile
 **Prioridade:** 🟠 Médio-baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivo:** `Dockerfile`
 
 **Problema:**  
@@ -266,7 +266,7 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 | BT-004 | Implementar categories_service.list_by_filter() | 🟡 Médio | 2 | ✅ |
 | BT-005 | Implementar endpoint POST /readings | 🟡 Médio | 2 | ✅ |
 | BT-006 | Implementar filtro shelve_id em books_repo.py | 🟡 Médio | 2 | ✅ |
-| BT-007 | Implementar Dockerfile | 🟠 Médio-baixo | 3 | ⬜ |
+| BT-007 | Implementar Dockerfile | 🟠 Médio-baixo | 3 | ✅ |
 | BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ⬜ |
 | BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ⬜ |
 | BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ⬜ |
