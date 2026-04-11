@@ -65,3 +65,14 @@ class ReadingUpdate(BaseModel):
         None, description='Atualizar data do Clube do Livro'
     )
     start_date: Optional[str] = Field(None, description='Atualizar data de início')
+
+
+class ReadingCreate(BaseModel):
+    book_id: int
+    status_id: int
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    pages_read: Optional[int] = None
+    personal_goal: Optional[str] = None
+    club_date: Optional[date] = None
+    club_name: Optional[str] = None

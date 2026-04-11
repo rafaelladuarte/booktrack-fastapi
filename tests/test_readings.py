@@ -167,3 +167,60 @@ class TestReadingsRoutes:
         data = response.json()
         assert len(data['data']) == 1
         assert data['data'][0]['status']['id'] == status_reading.id
+
+    async def test_create_reading_success(
+        self,
+        async_client: AsyncClient,
+        async_session: AsyncSession,
+        auth_headers: dict,
+    ):
+        """
+        Test POST /readings - Deve criar leitura nova retornando 201 Created.
+        """
+        status = ReadingStatus(name='Lendo')
+        book = Books(title='Livro POST', original_publication_year=2020, total_pages=150)
+        async_session.add_all([status, book])
+        await async_session.commit()
+        await async_session.refresh(status)
+        await async_session.refresh(book)
+
+        payload = {
+            "book_id": book.id,
+            "status_id": status.id,
+            "pages_read": 10
+        }
+
+        response = await async_client.post('/readings', json=payload, headers=auth_headers)
+
+        assert response.status_code == HTTPStatus.CREATED
+
+        data = response.json()
+        assert data['book']['id'] == book.id
+        assert data['status']['id'] == status.id
+        assert data['pages_read'] == 10
+
+    async def test_create_reading_book_not_found(
+        self, async_client: AsyncClient, auth_headers: dict
+    ):
+        """
+        Test POST /readings - Deve retornar 404 se book_id for inexistente.
+        """
+        payload = {
+            "book_id": 99999,
+            "status_id": 1
+        }
+        response = await async_client.post('/readings', json=payload, headers=auth_headers)
+
+        assert response.status_code == HTTPStatus.NOT_FOUND
+        assert response.json()['detail'] == 'Recurso não encontrado'
+
+    async def test_create_reading_unauthorized(self, async_client: AsyncClient):
+        """
+        Test POST /readings - Deve retornar 401 faltando Auth Bearer.
+        """
+        payload = {
+            "book_id": 1,
+            "status_id": 1
+        }
+        response = await async_client.post('/readings', json=payload)
+        assert response.status_code == HTTPStatus.UNAUTHORIZED

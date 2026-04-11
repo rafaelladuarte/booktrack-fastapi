@@ -58,6 +58,24 @@ class ReadingsRepository:
         result = await self.db.scalars(stmt)
         return result.first()
 
+    async def create(self, user_id: int, data: dict):
+        """Cria e persiste uma nova leitura.
+
+        Args:
+            user_id: ID do usuário autenticado no sistema.
+            data: Dicionário com os atributos da leitura criados no request body.
+
+        Returns:
+            O objeto Readings carregado com todos os relacionamentos necessários.
+        """
+        reading = Readings(**data)
+        self.db.add(reading)
+        await self.db.commit()
+        await self.db.refresh(reading)
+
+        # Recarregar para trazer relacionamentos via selectinload
+        return await self.get_by_id(reading.id)
+
     async def get_by_filter(self, filters):
         # The original filter used ReadingExpandedView fields.
         # I'll adapt it to use Readings and its relationship for title/year if needed,

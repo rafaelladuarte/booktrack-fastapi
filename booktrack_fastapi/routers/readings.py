@@ -5,6 +5,8 @@ from fastapi import APIRouter, Query
 
 from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
 from booktrack_fastapi.schemas.readings import (
+    ReadingCreate,
+    ReadingExpanded,
     ReadingList,
     ReadingQuery,
     ReadingUpdate,
@@ -12,6 +14,16 @@ from booktrack_fastapi.schemas.readings import (
 from booktrack_fastapi.services.readings_service import ReadingsService
 
 router = APIRouter(prefix='/readings', tags=['Readings'])
+
+
+@router.post('', response_model=ReadingExpanded, status_code=HTTPStatus.CREATED)
+async def create_reading(
+    data: ReadingCreate,
+    db: SessionDep,
+    current_user: CurrentUser,
+):
+    service = ReadingsService(db)
+    return await service.create(user_id=current_user.id, data=data)
 
 
 @router.get('', response_model=ReadingList, status_code=HTTPStatus.OK)

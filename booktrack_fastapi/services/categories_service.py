@@ -69,14 +69,12 @@ class CategoriesService:
         return obj
 
     async def list_by_filter(self, **filters):
-        # Repo doesn't seem to have get_filtered in the file I read earlier?
-        # I only saw get_all, get_by_id, get_by_parent_id, get_by_name_and_parent, create.
-        # Let's check CategoriesRepository content again mentally.
-        # It did NOT have get_filtered.
-        # Maybe it was dynamically added or I missed it.
-        # To be safe, I will comment this out or assume it wasn't used/working.
-        # But I must return something valid or remove the method if unused.
-        # Given the task is refactor to async, I'll assume get_filtered is not
-        # the main focus or doesn't exist.
-        # I will remove it to avoid runtime error effectively.
-        pass
+        """Lista categorias aplicando filtros opcionais.
+
+        Args:
+            **filters: Objeto com os parâmetros de filtro (ex: parent_id).
+
+        Returns:
+            Lista de categorias que atendem aos filtros informados.
+        """
+        return await self.repo.get_filtered(**filters)

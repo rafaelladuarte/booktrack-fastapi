@@ -85,7 +85,7 @@ Campo de login, query no banco e `sub` do JWT usam o mesmo identificador de form
 
 ### BT-004 — Implementar categories_service.list_by_filter()
 **Prioridade:** 🟡 Médio  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivo:** `booktrack_fastapi/services/categories_service.py`
 
 **Problema:**  
@@ -104,7 +104,7 @@ O método `list_by_filter()` existe no service de categorias mas retorna `pass` 
 
 ### BT-005 — Implementar endpoint POST /readings
 **Prioridade:** 🟡 Médio  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivo:** `booktrack_fastapi/routers/readings.py`, `booktrack_fastapi/services/readings_service.py`
 
 **Problema:**  
@@ -263,8 +263,8 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 | BT-001 | Mover SECRET_KEY para variável de ambiente | 🔴 Crítico | 1 | ✅ |
 | BT-002 | Corrigir inconsistência no campo de login | 🟡 Médio | 1 | ✅ |
 | BT-003 | Corrigir fixtures async em test_readings.py | 🟡 Médio | 1 | ✅ |
-| BT-004 | Implementar categories_service.list_by_filter() | 🟡 Médio | 2 | ⬜ |
-| BT-005 | Implementar endpoint POST /readings | 🟡 Médio | 2 | ⬜ |
+| BT-004 | Implementar categories_service.list_by_filter() | 🟡 Médio | 2 | ✅ |
+| BT-005 | Implementar endpoint POST /readings | 🟡 Médio | 2 | ✅ |
 | BT-006 | Implementar filtro shelve_id em books_repo.py | 🟡 Médio | 2 | ⬜ |
 | BT-007 | Implementar Dockerfile | 🟠 Médio-baixo | 3 | ⬜ |
 | BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ⬜ |

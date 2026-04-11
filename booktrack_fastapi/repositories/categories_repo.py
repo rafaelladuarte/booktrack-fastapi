@@ -21,6 +21,26 @@ class CategoriesRepository:
         result = await self.db.scalars(stmt)
         return result.all()
 
+    async def get_filtered(self, **filters):
+        """Busca categorias aplicando filtros opcionais.
+
+        Args:
+            **filters: Parâmetros de filtro flexíveis (ex: parent_id).
+
+        Returns:
+            Lista de categorias que atendem aos filtros definidos.
+        """
+        stmt = select(Categories)
+        conditions = []
+        if 'parent_id' in filters:
+            conditions.append(Categories.parent_id == filters['parent_id'])
+
+        if conditions:
+            stmt = stmt.where(*conditions)
+
+        result = await self.db.scalars(stmt)
+        return result.all()
+
     async def get_by_name_and_parent(self, name: str, parent_id: int = None):
         stmt = select(Categories).where(
             Categories.parent_id == parent_id, Categories.name == name

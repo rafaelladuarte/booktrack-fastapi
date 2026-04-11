@@ -21,14 +21,18 @@ async def list_categories(
     db: SessionDep,
     current_user: CurrentUser,
 ):
+    """Lista categorias vinculadas ou sem filtros aplicados.
+
+    Args:
+        filter_query: Parâmetros Query para filtrar listagem (ex: parent_id).
+        db: Sessão de banco de dados assíncrona injetada.
+        current_user: Usuário autenticado obtido do token.
+
+    Returns:
+        Um JSON contendo as categorias agrupadas nas regras de negócio.
+    """
     service = CategoriesService(db)
-
-    parent_id = filter_query.parent_id
-    if parent_id:
-        items = await service.get_by_parent_id(parent_id)
-        return {'data': items}
-
-    items = await service.list_all()
+    items = await service.list_by_filter(**filter_query.model_dump(exclude_unset=True))
     return {'data': items}
 
 
