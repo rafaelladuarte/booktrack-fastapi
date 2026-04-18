@@ -58,7 +58,8 @@ class BooksRepository:
 
         if filters.get('shelve_id'):
             stmt = (
-                stmt.join(Readings)
+                stmt
+                .join(Readings)
                 .join(readings_shelves)
                 .where(readings_shelves.c.shelf_id == filters['shelve_id'])
                 .distinct()

@@ -85,9 +85,6 @@ class ReadingsRepository:
         return await self.get_by_id(reading.id)
 
     async def get_by_filter(self, filters):
-        # The original filter used ReadingExpandedView fields.
-        # I'll adapt it to use Readings and its relationship for title/year if needed,
-        # or stick to Readings fields (status, club).
         stmt = select(Readings).options(
             selectinload(Readings.status),
             selectinload(Readings.tags),

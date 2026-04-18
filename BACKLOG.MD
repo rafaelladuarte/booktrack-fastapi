@@ -191,7 +191,7 @@ O desenvolvimento usa SQLite enquanto a produção planeja PostgreSQL. Isso pode
 
 ### BT-009 — Avaliar e remover BooksExpandedView e ReadingExpandedView
 **Prioridade:** 🟢 Baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivo:** `booktrack_fastapi/models/books.py`, `booktrack_fastapi/models/readings.py`
 
 **Problema:**  
@@ -268,6 +268,6 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 | BT-006 | Implementar filtro shelve_id em books_repo.py | 🟡 Médio | 2 | ✅ |
 | BT-007 | Implementar Dockerfile | 🟠 Médio-baixo | 3 | ✅ |
 | BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ✅ |
-| BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ⬜ |
+| BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ✅ |
 | BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ⬜ |
 | BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ⬜ |

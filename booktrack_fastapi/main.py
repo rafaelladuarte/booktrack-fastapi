@@ -12,7 +12,7 @@ from booktrack_fastapi.routers import (
 )
 
 app = FastAPI(
-    title="BookTrack API",
+    title='BookTrack API',
     description="""
 API for managing and analyzing a personal book library.
 
@@ -21,7 +21,7 @@ Features:
 - Reading tracking
 - Reading analytics and insights
 """,
-    version="0.1.0"
+    version='0.1.0',
 )
 
 
