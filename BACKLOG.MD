@@ -260,7 +260,7 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 
 ### BT-012 — Analisar e mapear CSV para os models do banco
 **Prioridade:** 🔴 Crítico
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivo:** `migrate_csv_to_db.py`, `data/`
 
 **Problema:**
@@ -280,7 +280,7 @@ Mapeamento completo e confirmado entre todas as colunas do CSV e os models do ba
 
 ### BT-013 — Implementar script de importação CSV
 **Prioridade:** 🔴 Crítico
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivo:** `migrate_csv_to_db.py`
 
 **Problema:**
@@ -342,6 +342,6 @@ Todos os endpoints retornam dados reais com relacionamentos expandidos corretame
 | BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ✅ |
 | BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ✅ |
 | BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ✅ |
-| BT-012 | Analisar e mapear CSV para os models | 🔴 Crítico | 5 | ⬜ |
-| BT-013 | Implementar script de importação CSV | 🔴 Crítico | 5 | ⬜ |
+| BT-012 | Analisar e mapear CSV para os models | 🔴 Crítico | 5 | ✅ |
+| BT-013 | Implementar script de importação CSV | 🔴 Crítico | 5 | ✅ |
 | BT-014 | Validar dados importados via API      | 🟡 Médio   | 5 | ⬜ |
