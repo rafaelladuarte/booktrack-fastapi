@@ -64,7 +64,7 @@ class AuthorSchema(BaseModel):
     id: int
     name: str
     gender: Optional[str] = None
-    country: Optional[str] = None
+    country_of_origin: Optional[str] = None
 
 
 class PublisherSchema(BaseModel):
