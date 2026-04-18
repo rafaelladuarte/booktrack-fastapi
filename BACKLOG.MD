@@ -256,6 +256,77 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 
 ---
 
+## Sprint 5 — Importação de Dados Reais
+
+### BT-012 — Analisar e mapear CSV para os models do banco
+**Prioridade:** 🔴 Crítico
+**Status:** ⬜ Não iniciado
+**Arquivo:** `migrate_csv_to_db.py`, `data/`
+
+**Problema:**
+O script de importação é um esboço nunca testado. Antes de executar qualquer importação, é necessário mapear cada coluna do CSV para o model correto do banco e identificar inconsistências.
+
+**Ação:**
+1. Ler todos os arquivos de models do banco
+2. Ler o CSV e identificar colunas, valores nulos, valores especiais ("-")
+3. Mapear cada coluna CSV para seu destino no banco
+4. Identificar hierarquia de dependências entre entidades
+5. Documentar decisões de mapeamento antes de implementar
+
+**Critério de aceite:**
+Mapeamento completo e confirmado entre todas as colunas do CSV e os models do banco. Estratégia definida para valores nulos, "-" e campos opcionais.
+
+---
+
+### BT-013 — Implementar script de importação CSV
+**Prioridade:** 🔴 Crítico
+**Status:** ⬜ Não iniciado
+**Arquivo:** `migrate_csv_to_db.py`
+
+**Problema:**
+O banco PostgreSQL está vazio. Os dados reais da usuária estão em CSV e precisam ser importados para que a API possa ser demonstrada e validada com dados reais.
+
+**Dependência:** BT-012 deve estar concluído antes.
+
+**Ação:**
+1. Reescrever `migrate_csv_to_db.py` usando `AsyncSession` e `Settings().DATABASE_URL`
+2. Implementar padrão `get_or_create` para evitar duplicações
+3. Importar entidades na ordem correta de dependência:
+   - Etapa 1: Authors, Publishers, Collections, Formats, ReadingStatus, Shelves, Tags
+   - Etapa 2: Categories (hierarquia Grupo → Genero → Subgenero)
+   - Etapa 3: Books (depende das etapas anteriores)
+   - Etapa 4: Readings (depende de Books)
+4. Tratar valores nulos, strings vazias e valor "-" como None
+5. Converter datas nos formatos `MM/YYYY` e `DD/MM/YYYY`
+6. Adicionar logging de progresso e warnings para linhas ignoradas
+
+**Critério de aceite:**
+Script executa sem erros. Banco populado com todos os registros do CSV sem duplicações. Script é idempotente (pode ser executado mais de uma vez com segurança).
+
+---
+
+### BT-014 — Validar dados importados via API
+**Prioridade:** 🟡 Médio
+**Status:** ⬜ Não iniciado
+**Arquivo:** Endpoints existentes
+
+**Problema:**
+Após a importação, é necessário validar que os dados estão corretos e que os endpoints retornam os relacionamentos expandidos adequadamente com dados reais.
+
+**Dependência:** BT-013 deve estar concluído antes.
+
+**Ação:**
+1. Verificar contagem de registros por tabela no banco
+2. Testar `GET /books` com dados reais e relacionamentos expandidos
+3. Testar `GET /readings` com dados reais
+4. Testar filtros com dados reais: `author_id`, `shelve_id`, `status_id`
+5. Identificar e corrigir qualquer problema de serialização ou relacionamento
+
+**Critério de aceite:**
+Todos os endpoints retornam dados reais com relacionamentos expandidos corretamente. Filtros funcionam com dados reais do banco.
+
+---
+
 ## Resumo
 
 | ID | Título | Prioridade | Sprint | Status |
@@ -271,3 +342,6 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 | BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ✅ |
 | BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ✅ |
 | BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ✅ |
+| BT-012 | Analisar e mapear CSV para os models | 🔴 Crítico | 5 | ⬜ |
+| BT-013 | Implementar script de importação CSV | 🔴 Crítico | 5 | ⬜ |
+| BT-014 | Validar dados importados via API      | 🟡 Médio   | 5 | ⬜ |
