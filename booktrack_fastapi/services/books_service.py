@@ -7,7 +7,6 @@ from booktrack_fastapi.models.collections import Collections
 from booktrack_fastapi.models.formats import Formats
 from booktrack_fastapi.models.publishers import Publishers
 
-# from booktrack_fastapi.repositories.authors_repo import A
 from booktrack_fastapi.repositories.books_repo import BooksRepository
 from booktrack_fastapi.repositories.categories_repo import CategoriesRepository
 from booktrack_fastapi.repositories.properties_repo import PropertiesRepository
@@ -20,6 +19,18 @@ class BooksService:
         self.repo = BooksRepository(db)
 
     async def create(self, data: 'BookCreate'):
+        """Cria um novo livro validando campos obrigatórios e duplicidade.
+
+        Args:
+            data: Dados para criação do livro.
+
+        Returns:
+            O objeto Books criado.
+
+        Raises:
+            HTTPException: 400 se campos obrigatórios faltarem, se o nome for curto
+                ou se o livro já existir.
+        """
         if not all([data.title, data.original_publication_year, data.total_pages]):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
@@ -85,9 +96,25 @@ class BooksService:
         return await self.repo.create(data.model_dump())
 
     async def list_all(self):
+        """Retorna todos os livros cadastrados com seus relacionamentos.
+
+        Returns:
+            Lista de objetos Books.
+        """
         return await self.repo.get_all()
 
     async def get_by_id(self, book_id: int):
+        """Busca um livro específico pelo seu ID.
+
+        Args:
+            book_id: Identificador único do livro.
+
+        Returns:
+            O objeto Books encontrado.
+
+        Raises:
+            HTTPException: 404 se o livro não for encontrado.
+        """
         obj = await self.repo.get_by_id(book_id)
         if not obj:
             raise HTTPException(
@@ -96,9 +123,29 @@ class BooksService:
         return obj
 
     async def list_by_filter(self, filters):
+        """Lista livros aplicando filtros dinâmicos.
+
+        Args:
+            filters: Objeto com os campos de filtro.
+
+        Returns:
+            Lista de livros que atendem aos critérios.
+        """
         return await self.repo.get_by_filter(filters.model_dump())
 
     async def update_by_id(self, book_id: int, data: 'BookUpdate'):
+        """Atualiza os dados de um livro existente.
+
+        Args:
+            book_id: ID do livro a ser atualizado.
+            data: Dados para atualização (campos opcionais).
+
+        Returns:
+            O objeto Books atualizado.
+
+        Raises:
+            HTTPException: 404 se o livro não for encontrado.
+        """
         obj = await self.repo.get_by_id(book_id)
         if not obj:
             raise HTTPException(
@@ -107,6 +154,17 @@ class BooksService:
         return await self.repo.update_by_id(book_id, data.model_dump(exclude_unset=True))
 
     async def delete_by_id(self, book_id: int):
+        """Remove um livro do sistema pelo seu ID.
+
+        Args:
+            book_id: ID do livro a ser removido.
+
+        Returns:
+            True se a remoção for bem-sucedida.
+
+        Raises:
+            HTTPException: 404 se o livro não for encontrado.
+        """
         obj = await self.repo.get_by_id(book_id)
         if not obj:
             raise HTTPException(

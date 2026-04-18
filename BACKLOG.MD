@@ -210,7 +210,7 @@ Não há código morto relacionado a views sem uso documentado ou aplicado.
 
 ### BT-010 — Remover arquivos de exemplo e arquivos soltos
 **Prioridade:** 🟢 Baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivos:** `repositories/example.py`, `tests/example_test_app.py`, `tests/example_test_db.py`, `simple.md`, `simple2.md`
 
 **Problema:**  
@@ -226,9 +226,9 @@ Repositório sem arquivos `example_*`, `simple.md` ou `simple2.md`.
 
 ---
 
-### BT-011 — Adicionar docstrings nas funções públicas de services e repositories
+### BT-011 — Adicionar docstrings em services e repositories
 **Prioridade:** 🟢 Baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivos:** `services/`, `repositories/`
 
 **Problema:**  
@@ -269,5 +269,5 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 | BT-007 | Implementar Dockerfile | 🟠 Médio-baixo | 3 | ✅ |
 | BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ✅ |
 | BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ✅ |
-| BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ⬜ |
-| BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ⬜ |
+| BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ✅ |
+| BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ✅ |

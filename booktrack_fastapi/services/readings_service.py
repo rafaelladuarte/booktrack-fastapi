@@ -37,9 +37,25 @@ class ReadingsService:
         return await self.repo.create(user_id=user_id, data=data.model_dump())
 
     async def list_all(self):
+        """Retorna todas as leituras registradas com relacionamentos expandidos.
+
+        Returns:
+            Lista de objetos Readings.
+        """
         return await self.repo.get_all()
 
     async def get_by_book_id(self, book_id: int):
+        """Busca o registro de leitura associado a um livro específico.
+
+        Args:
+            book_id: ID do livro.
+
+        Returns:
+            O objeto Readings encontrado.
+
+        Raises:
+            HTTPException: 404 se a leitura não for encontrada.
+        """
         obj = await self.repo.get_by_book_id(book_id)
         if not obj:
             raise HTTPException(
@@ -49,9 +65,29 @@ class ReadingsService:
         return obj
 
     async def list_by_filter(self, filters):
+        """Lista leituras aplicando filtros de status ou clube do livro.
+
+        Args:
+            filters: Objeto com os parâmetros de filtro.
+
+        Returns:
+            Lista de leituras que atendem aos filtros.
+        """
         return await self.repo.get_by_filter(filters.model_dump())
 
     async def update_by_book_id(self, book_id: int, data: 'ReadingUpdate'):
+        """Atualiza o progresso ou dados de uma leitura pelo ID do livro.
+
+        Args:
+            book_id: ID do livro vinculado à leitura.
+            data: Dados para atualização parcial.
+
+        Returns:
+            O objeto Readings atualizado.
+
+        Raises:
+            HTTPException: 404 se a leitura não for encontrada.
+        """
         obj = await self.repo.get_by_book_id(book_id)
         if not obj:
             raise HTTPException(

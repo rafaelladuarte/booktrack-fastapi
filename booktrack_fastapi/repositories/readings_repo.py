@@ -11,6 +11,11 @@ class ReadingsRepository:
         self.db = db
 
     async def get_all(self):
+        """Lista todas as leituras com carregamento de livro, status, tags e estantes.
+
+        Returns:
+            Lista de instâncias de Readings.
+        """
         stmt = select(Readings).options(
             selectinload(Readings.status),
             selectinload(Readings.tags),
@@ -27,6 +32,14 @@ class ReadingsRepository:
         return result.all()
 
     async def get_by_id(self, reading_id: int):
+        """Busca uma leitura por ID com todos os relacionamentos expandidos.
+
+        Args:
+            reading_id: ID primário da leitura.
+
+        Returns:
+            Instância de Readings ou None.
+        """
         stmt = (
             select(Readings)
             .where(Readings.id == reading_id)
@@ -47,6 +60,14 @@ class ReadingsRepository:
         return result.first()
 
     async def get_by_book_id(self, book_id: int):
+        """Busca o registro de leitura vinculado a um ID de livro específico.
+
+        Args:
+            book_id: ID do livro.
+
+        Returns:
+            Instância de Readings ou None.
+        """
         stmt = (
             select(Readings)
             .where(Readings.book_id == book_id)
@@ -85,6 +106,14 @@ class ReadingsRepository:
         return await self.get_by_id(reading.id)
 
     async def get_by_filter(self, filters):
+        """Filtra leituras por status ou nome do clube do livro.
+
+        Args:
+            filters: Dicionário com critérios de busca.
+
+        Returns:
+            Lista de leituras filtradas.
+        """
         stmt = select(Readings).options(
             selectinload(Readings.status),
             selectinload(Readings.tags),
@@ -121,6 +150,15 @@ class ReadingsRepository:
         book_id: int,
         parameters: dict,
     ):
+        """Atualiza dados de leitura vinculados a um livro específico.
+
+        Args:
+            book_id: ID do livro.
+            parameters: Atributos a serem modificados.
+
+        Returns:
+            A instância de Readings atualizada.
+        """
         stmt = update(Readings).where(Readings.book_id == book_id).values(**parameters)
         await self.db.execute(stmt)
         await self.db.commit()
