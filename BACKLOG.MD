@@ -167,7 +167,7 @@ O `Dockerfile` existe no repositório mas está completamente vazio. A aplicaç�
 
 ### BT-008 — Migrar ambiente de desenvolvimento para PostgreSQL
 **Prioridade:** 🟠 Médio-baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivo:** `.env`, `alembic.ini`, `tests/conftest.py`
 
 **Problema:**  
@@ -267,7 +267,7 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 | BT-005 | Implementar endpoint POST /readings | 🟡 Médio | 2 | ✅ |
 | BT-006 | Implementar filtro shelve_id em books_repo.py | 🟡 Médio | 2 | ✅ |
 | BT-007 | Implementar Dockerfile | 🟠 Médio-baixo | 3 | ✅ |
-| BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ⬜ |
+| BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ✅ |
 | BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ⬜ |
 | BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ⬜ |
 | BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ⬜ |
