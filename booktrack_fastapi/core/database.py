@@ -8,12 +8,12 @@ from sqlalchemy.ext.asyncio import (
 
 from booktrack_fastapi.core.settings import Settings
 
-# Adapta a URL para driver async se for sqlite padrão
+
 database_url = Settings().DATABASE_URL
 if database_url.startswith('sqlite://') and 'aiosqlite' not in database_url:
     database_url = database_url.replace('sqlite://', 'sqlite+aiosqlite://')
 
-# Configurações específicas para SQLite async
+
 connect_args = {}
 if database_url.startswith('sqlite'):
     connect_args = {'check_same_thread': False}

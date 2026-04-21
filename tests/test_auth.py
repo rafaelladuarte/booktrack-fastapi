@@ -18,8 +18,6 @@ async def test_auth_token_success(async_client: AsyncClient, async_session: Asyn
     async_session.add(user)
     await async_session.commit()
 
-    # O campo 'username' do formulário OAuth2 recebe o e-mail do usuário.
-    # Isso é uma limitação do protocolo OAuth2PasswordRequestForm — ver BT-002.
     response = await async_client.post(
         '/auth/token',
         data={'username': 'test@example.com', 'password': 'testpassword'},

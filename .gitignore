@@ -180,3 +180,5 @@ pyrightconfig.json
 
 README copy.md
 database.db
+.env.docker
+.env
