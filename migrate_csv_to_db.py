@@ -7,6 +7,7 @@ Executa de forma assíncrona usando AsyncSession.
 Uso:
     python migrate_csv_to_db.py
 """
+
 import asyncio
 import logging
 from datetime import date, datetime
@@ -187,7 +188,6 @@ async def importar_entidades_simples(
     status_normalizado: list[str] = []
 
     for _, row in df.iterrows():
-
         # --- Authors ---
         author_name_raw = clean_val(row.get('Escritor'))
         if author_name_raw:
@@ -200,9 +200,7 @@ async def importar_entidades_simples(
                 gender = GENDER_MAP.get(gender_raw) if gender_raw else None
                 origin = clean_val(row.get('Origem'))
 
-                instance = await session.scalar(
-                    select(Authors).where(Authors.name == author_name)
-                )
+                instance = await session.scalar(select(Authors).where(Authors.name == author_name))
                 if not instance:
                     instance = Authors(
                         name=author_name,
@@ -278,7 +276,9 @@ async def importar_entidades_simples(
     print(f'  ✓ Shelves: {shelves_count} criados')
     print(f'  ✓ Tags: {tags_count} criados')
     if status_normalizado:
-        print(f'  ⚠ {len(status_normalizado)} status normalizados para "Quero Ler": {status_normalizado}')
+        print(
+            f'  ⚠ {len(status_normalizado)} status normalizados para "Quero Ler": {status_normalizado}'
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -321,9 +321,7 @@ async def importar_categorias(
 
         key = f'Cat:Genero:{genero_name}'
         if key not in cache:
-            await get_or_create_category(
-                session, cache, key, genero_name, parent_id=grupo.id
-            )
+            await get_or_create_category(session, cache, key, genero_name, parent_id=grupo.id)
             generos_count += 1
 
     # Passagem 3: Subgêneros (parent_id=genero.id)
@@ -339,9 +337,7 @@ async def importar_categorias(
 
         key = f'Cat:Subgenero:{subgenero_name}'
         if key not in cache:
-            await get_or_create_category(
-                session, cache, key, subgenero_name, parent_id=genero.id
-            )
+            await get_or_create_category(session, cache, key, subgenero_name, parent_id=genero.id)
             subgeneros_count += 1
 
     print(f'  ✓ Grupos: {grupos_count}')
@@ -477,9 +473,7 @@ async def importar_leituras(
             continue
 
         # Idempotência: verificar se já existe reading para esse book_id
-        existing_reading = await session.scalar(
-            select(Readings).where(Readings.book_id == book.id)
-        )
+        existing_reading = await session.scalar(select(Readings).where(Readings.book_id == book.id))
         if existing_reading:
             leituras_puladas += 1
             continue
