@@ -13,12 +13,13 @@ from booktrack_fastapi.core.database import get_session
 from booktrack_fastapi.core.settings import Settings
 from booktrack_fastapi.models.users import User
 
-# Configurações de segurança
-# SECRET_KEY é lida exclusivamente via variável de ambiente (arquivo .env)
-SECRET_KEY = Settings().SECRET_KEY
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutos
-REFRESH_TOKEN_EXPIRE_DAYS = 7  # 7 dias
+
+settings = Settings()
+
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
+REFRESH_TOKEN_EXPIRE_DAYS = settings.REFRESH_TOKEN_EXPIRE_DAYS
 
 pwd_context = PasswordHash.recommended()
 
@@ -74,7 +75,6 @@ def verify_token(token: str, token_type: str = 'access') -> dict:
     try:
         payload = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
-        # Verifica se o tipo do token está correto
         if payload.get('type') != token_type:
             raise HTTPException(
                 status_code=HTTPStatus.UNAUTHORIZED,

@@ -12,6 +12,11 @@ class BooksRepository:
         self.db = db
 
     async def get_all(self):
+        """Executa query para retornar todos os livros com seus relacionamentos.
+
+        Returns:
+            Lista de instâncias de Books.
+        """
         stmt = select(Books).options(
             selectinload(Books.publisher),
             selectinload(Books.collection),
@@ -23,6 +28,14 @@ class BooksRepository:
         return result.all()
 
     async def get_by_id(self, book_id: int):
+        """Busca um livro por ID carregando antecipadamente todos os relacionamentos.
+
+        Args:
+            book_id: ID primário do livro.
+
+        Returns:
+            Instância de Books ou None.
+        """
         stmt = (
             select(Books)
             .where(Books.id == book_id)
@@ -58,7 +71,8 @@ class BooksRepository:
 
         if filters.get('shelve_id'):
             stmt = (
-                stmt.join(Readings)
+                stmt
+                .join(Readings)
                 .join(readings_shelves)
                 .where(readings_shelves.c.shelf_id == filters['shelve_id'])
                 .distinct()
@@ -99,6 +113,14 @@ class BooksRepository:
         self,
         parameters: dict,
     ):
+        """Persiste um novo livro no banco de dados.
+
+        Args:
+            parameters: Dicionário com os atributos do livro.
+
+        Returns:
+            A instância de Books recém-criada.
+        """
         item = Books(
             title=parameters.get('title'),
             original_publication_year=parameters.get('original_publication_year'),
@@ -120,12 +142,29 @@ class BooksRepository:
         book_id: int,
         parameters: dict,
     ):
+        """Atualiza campos específicos de um livro por ID.
+
+        Args:
+            book_id: ID do livro.
+            parameters: Dicionário com campos e valores a atualizar.
+
+        Returns:
+            True se a operação foi executada.
+        """
         stmt = update(Books).where(Books.id == book_id).values(**parameters)
         await self.db.execute(stmt)
         await self.db.commit()
         return True
 
     async def delete_by_id(self, book_id: int):
+        """Remove permanentemente um livro do banco de dados.
+
+        Args:
+            book_id: ID do livro a ser deletado.
+
+        Returns:
+            True se a operação foi executada.
+        """
         stmt = delete(Books).where(Books.id == book_id)
         await self.db.execute(stmt)
         await self.db.commit()

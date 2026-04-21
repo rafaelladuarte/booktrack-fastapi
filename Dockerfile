@@ -17,6 +17,8 @@ RUN poetry install --only main --no-root && rm -rf $POETRY_CACHE_DIR
 # Stage 2: Runtime
 FROM python:3.12-slim as runtime
 
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+
 ENV PYTHONPATH=/app
 
 WORKDIR /app

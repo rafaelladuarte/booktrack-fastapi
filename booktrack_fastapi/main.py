@@ -11,7 +11,18 @@ from booktrack_fastapi.routers import (
     readings,
 )
 
-app = FastAPI(title='BookTrack API - Authentication Service')
+app = FastAPI(
+    title='BookTrack API',
+    description="""
+API for managing and analyzing a personal book library.
+
+Features:
+- Book and collection management
+- Reading tracking
+- Reading analytics and insights
+""",
+    version='0.1.0',
+)
 
 
 @app.exception_handler(404)

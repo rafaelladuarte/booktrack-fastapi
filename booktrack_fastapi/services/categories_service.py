@@ -12,6 +12,20 @@ class CategoriesService:
         self.repo = CategoriesRepository(db)
 
     async def create(self, name: str, parent_id: int | None = None, min_length: int = 2):
+        """Cria uma nova categoria, validando unicidade no nível hierárquico.
+
+        Args:
+            name: Nome da categoria.
+            parent_id: ID da categoria pai (opcional).
+            min_length: Comprimento mínimo do nome.
+
+        Returns:
+            A categoria recém-criada.
+
+        Raises:
+            HTTPException: 400 se o nome for curto ou já existir no nível.
+            HTTPException: 404 se a categoria pai informada não existir.
+        """
         name = name.strip()
 
         if len(name) < min_length:
@@ -37,9 +51,25 @@ class CategoriesService:
         return await self.repo.create(name=name, parent_id=parent_id)
 
     async def list_all(self):
+        """Lista todas as categorias cadastradas no sistema.
+
+        Returns:
+            Lista de objetos Categories.
+        """
         return await self.repo.get_all()
 
     async def get_by_id(self, category_id: int):
+        """Busca uma categoria específica pelo seu ID.
+
+        Args:
+            category_id: ID da categoria.
+
+        Returns:
+            O objeto Categories encontrado.
+
+        Raises:
+            HTTPException: 404 se não for encontrada.
+        """
         obj = await self.repo.get_by_id(category_id)
         if not obj:
             raise HTTPException(
@@ -49,6 +79,17 @@ class CategoriesService:
         return obj
 
     async def get_by_parent_id(self, parent_id: int):
+        """Busca todas as categorias filhas de um determinado ID pai.
+
+        Args:
+            parent_id: ID da categoria pai.
+
+        Returns:
+            Lista de categorias filhas.
+
+        Raises:
+            HTTPException: 404 se nenhuma filha for encontrada ou o pai não existir.
+        """
         # The repo returns a list for get_by_parent_id
         obj = await self.repo.get_by_parent_id(parent_id)
         # Service logic seemed to imply check existence of parent, or return children?

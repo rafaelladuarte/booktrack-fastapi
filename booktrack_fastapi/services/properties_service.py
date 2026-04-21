@@ -9,6 +9,19 @@ class PropertiesService:
         self.repo = repository_cls(db, model)
 
     async def create(self, name: str, lenght: int = 2):
+        """Cria um novo registro para uma entidade genérica (Editora, Formato, etc).
+
+        Args:
+            name: Nome do registro a ser criado.
+            lenght: Comprimento mínimo exigido para o nome.
+
+        Returns:
+            True se criado com sucesso.
+
+        Raises:
+            HTTPException: 422 se o nome for muito curto.
+            HTTPException: 409 se o registro com o mesmo nome já existir.
+        """
         name = name.strip()
 
         if len(name) < lenght:
@@ -28,9 +41,25 @@ class PropertiesService:
         return True
 
     async def list_all(self):
+        """Lista todos os registros da entidade gerenciada.
+
+        Returns:
+            Lista de objetos do modelo.
+        """
         return await self.repo.get_all()
 
     async def get_by_id(self, propertie_id: int):
+        """Busca um registro específico da entidade pelo ID.
+
+        Args:
+            propertie_id: Identificador único do registro.
+
+        Returns:
+            O objeto encontrado.
+
+        Raises:
+            HTTPException: 404 se não for encontrado.
+        """
         obj = await self.repo.get_by_id(propertie_id)
 
         if not obj:
@@ -42,6 +71,11 @@ class PropertiesService:
         return obj
 
     async def list_by_filter(self, **filters):
+        """Lista registros aplicando filtros opcionais (atualmente não implementado).
+
+        Args:
+            **filters: Parâmetros de filtro.
+        """
         # Assuming repo update didn't include filtered search, but keeping structure if needed
         pass
         # return await self.repo.get_filtered(**filters)

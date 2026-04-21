@@ -167,7 +167,7 @@ O `Dockerfile` existe no repositório mas está completamente vazio. A aplicaç�
 
 ### BT-008 — Migrar ambiente de desenvolvimento para PostgreSQL
 **Prioridade:** 🟠 Médio-baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivo:** `.env`, `alembic.ini`, `tests/conftest.py`
 
 **Problema:**  
@@ -191,7 +191,7 @@ O desenvolvimento usa SQLite enquanto a produção planeja PostgreSQL. Isso pode
 
 ### BT-009 — Avaliar e remover BooksExpandedView e ReadingExpandedView
 **Prioridade:** 🟢 Baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivo:** `booktrack_fastapi/models/books.py`, `booktrack_fastapi/models/readings.py`
 
 **Problema:**  
@@ -210,7 +210,7 @@ Não há código morto relacionado a views sem uso documentado ou aplicado.
 
 ### BT-010 — Remover arquivos de exemplo e arquivos soltos
 **Prioridade:** 🟢 Baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivos:** `repositories/example.py`, `tests/example_test_app.py`, `tests/example_test_db.py`, `simple.md`, `simple2.md`
 
 **Problema:**  
@@ -226,9 +226,9 @@ Repositório sem arquivos `example_*`, `simple.md` ou `simple2.md`.
 
 ---
 
-### BT-011 — Adicionar docstrings nas funções públicas de services e repositories
+### BT-011 — Adicionar docstrings em services e repositories
 **Prioridade:** 🟢 Baixo  
-**Status:** ⬜ Não iniciado  
+**Status:** ✅ Concluído  
 **Arquivos:** `services/`, `repositories/`
 
 **Problema:**  
@@ -256,6 +256,307 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 
 ---
 
+## Sprint 5 — Importação de Dados Reais
+
+### BT-012 — Analisar e mapear CSV para os models do banco
+**Prioridade:** 🔴 Crítico
+**Status:** ✅ Concluído
+**Arquivo:** `migrate_csv_to_db.py`, `data/`
+
+**Problema:**
+O script de importação é um esboço nunca testado. Antes de executar qualquer importação, é necessário mapear cada coluna do CSV para o model correto do banco e identificar inconsistências.
+
+**Ação:**
+1. Ler todos os arquivos de models do banco
+2. Ler o CSV e identificar colunas, valores nulos, valores especiais ("-")
+3. Mapear cada coluna CSV para seu destino no banco
+4. Identificar hierarquia de dependências entre entidades
+5. Documentar decisões de mapeamento antes de implementar
+
+**Critério de aceite:**
+Mapeamento completo e confirmado entre todas as colunas do CSV e os models do banco. Estratégia definida para valores nulos, "-" e campos opcionais.
+
+---
+
+### BT-013 — Implementar script de importação CSV
+**Prioridade:** 🔴 Crítico
+**Status:** ✅ Concluído
+**Arquivo:** `migrate_csv_to_db.py`
+
+**Problema:**
+O banco PostgreSQL está vazio. Os dados reais da usuária estão em CSV e precisam ser importados para que a API possa ser demonstrada e validada com dados reais.
+
+**Dependência:** BT-012 deve estar concluído antes.
+
+**Ação:**
+1. Reescrever `migrate_csv_to_db.py` usando `AsyncSession` e `Settings().DATABASE_URL`
+2. Implementar padrão `get_or_create` para evitar duplicações
+3. Importar entidades na ordem correta de dependência:
+   - Etapa 1: Authors, Publishers, Collections, Formats, ReadingStatus, Shelves, Tags
+   - Etapa 2: Categories (hierarquia Grupo → Genero → Subgenero)
+   - Etapa 3: Books (depende das etapas anteriores)
+   - Etapa 4: Readings (depende de Books)
+4. Tratar valores nulos, strings vazias e valor "-" como None
+5. Converter datas nos formatos `MM/YYYY` e `DD/MM/YYYY`
+6. Adicionar logging de progresso e warnings para linhas ignoradas
+
+**Critério de aceite:**
+Script executa sem erros. Banco populado com todos os registros do CSV sem duplicações. Script é idempotente (pode ser executado mais de uma vez com segurança).
+
+---
+
+### BT-014 — Validar dados importados via API
+**Prioridade:** 🟡 Médio
+**Status:** ⬜ Não iniciado
+**Arquivo:** Endpoints existentes
+
+**Problema:**
+Após a importação, é necessário validar que os dados estão corretos e que os endpoints retornam os relacionamentos expandidos adequadamente com dados reais.
+
+**Dependência:** BT-013 deve estar concluído antes.
+
+**Ação:**
+1. Verificar contagem de registros por tabela no banco
+2. Testar `GET /books` com dados reais e relacionamentos expandidos
+3. Testar `GET /readings` com dados reais
+4. Testar filtros com dados reais: `author_id`, `shelve_id`, `status_id`
+5. Identificar e corrigir qualquer problema de serialização ou relacionamento
+
+**Critério de aceite:**
+Todos os endpoints retornam dados reais com relacionamentos expandidos corretamente. Filtros funcionam com dados reais do banco.
+
+---
+
+## Sprint 6 — RBAC + Rate Limiting
+
+---
+
+### BT-015 — Adicionar campo `role` ao model User e migration
+**Prioridade:** 🔴 Crítico
+**Status:** ⬜ Não iniciado
+**Arquivos:** `models/users.py`, `migrations/`
+
+**Problema:**
+O model `User` não tem campo `role`. Sem ele, não é possível distinguir Admin de Viewer em nenhuma camada da aplicação.
+
+**Ação:**
+1. Adicionar enum `UserRole` com valores `"admin"` e `"viewer"`
+2. Adicionar campo `role` no model `User` com default `"viewer"`
+3. Gerar migration: `alembic revision --autogenerate -m "add_role_to_users"`
+4. Aplicar migration: `alembic upgrade head`
+5. Atualizar o usuário de teste para `admin` diretamente no banco
+6. Rodar `task test` e confirmar que nada quebrou
+
+**Critério de aceite:**
+Tabela `users` tem coluna `role`. Usuário existente pode ter seu papel atualizado. `task test` passa.
+
+---
+
+### BT-016 — Incluir `role` no payload do JWT
+**Prioridade:** 🔴 Crítico
+**Status:** ⬜ Não iniciado
+**Arquivos:** `core/security.py`, `routers/auth.py`
+
+**Problema:**
+O token JWT atual carrega apenas o `email` como `sub`. Para verificar o papel sem consultar o banco a cada requisição, o `role` precisa estar no token.
+
+**Dependência:** BT-015 concluído.
+
+**Ação:**
+1. Atualizar `routers/auth.py` para incluir `role` no `token_data`
+2. Confirmar que `get_current_user` retorna o `User` completo com `role`
+3. Rodar `task test` e confirmar que `test_auth.py` e `test_security.py` passam
+
+**Critério de aceite:**
+Token JWT decodificado contém os campos `sub` (email) e `role`. `task test` passa.
+
+---
+
+### BT-017 — Criar dependências `RequireAdmin` e `AdminUser`
+**Prioridade:** 🟡 Médio
+**Status:** ⬜ Não iniciado
+**Arquivos:** `core/dependencies.py`
+
+**Problema:**
+Não existe mecanismo para bloquear endpoints por papel. Qualquer usuário autenticado tem acesso irrestrito a todos os endpoints.
+
+**Dependência:** BT-016 concluído.
+
+**Ação:**
+1. Criar função `require_admin()` em `core/dependencies.py`:
+   - Recebe `CurrentUser` como parâmetro
+   - Verifica se `user.role == "admin"`
+   - Lança `HTTPException(403)` se não for admin
+   - Retorna o usuário se for admin
+2. Criar alias `AdminUser = Annotated[User, Depends(require_admin)]`
+3. Escrever testes unitários cobrindo:
+   - Admin passa pela dependência
+   - Viewer recebe 403
+   - Usuário não autenticado recebe 401
+4. Rodar `task test`
+
+**Critério de aceite:**
+`AdminUser` bloqueia viewers com 403. `CurrentUser` continua funcionando para qualquer autenticado. `task test` passa.
+
+---
+
+### BT-018 — Proteger endpoints de escrita com `AdminUser`
+**Prioridade:** 🟡 Médio
+**Status:** ⬜ Não iniciado
+**Arquivos:** todos os routers
+
+**Problema:**
+Todos os endpoints de escrita (POST, PUT, DELETE) estão acessíveis a qualquer usuário autenticado, independente do papel.
+
+**Dependência:** BT-017 concluído.
+
+**Ação:**
+1. Substituir `CurrentUser` por `AdminUser` nos seguintes endpoints:
+   - `routers/books.py`: POST, PUT, DELETE
+   - `routers/readings.py`: POST, PUT
+   - `routers/authors.py`: POST, PUT, DELETE
+   - `routers/categories.py`: POST
+   - `routers/properties.py`: POST (collections, publishers, tags, shelves, formats, reading_status)
+2. Manter `CurrentUser` em todos os endpoints GET
+3. Rodar `task test` e confirmar que nada quebrou
+
+**Critério de aceite:**
+`GET` em qualquer endpoint funciona para Admin e Viewer. POST, PUT, DELETE retornam 403 para Viewer e funcionam normalmente para Admin.
+
+---
+
+### BT-019 — Escrever testes de integração para RBAC
+**Prioridade:** 🟡 Médio
+**Status:** ⬜ Não iniciado
+**Arquivos:** `tests/`
+
+**Problema:**
+Sem testes de integração, não há garantia de que o RBAC está funcionando corretamente em todos os endpoints.
+
+**Dependência:** BT-018 concluído.
+
+**Ação:**
+1. Criar fixture `admin_token` e `viewer_token` no `conftest.py`
+2. Criar `tests/test_rbac.py` cobrindo:
+   - Viewer faz GET /books → 200
+   - Viewer faz POST /books → 403
+   - Viewer faz PUT /books/{id} → 403
+   - Viewer faz DELETE /books/{id} → 403
+   - Admin faz POST /books → 201
+   - Admin faz PUT /books/{id} → 200
+   - Admin faz DELETE /books/{id} → 204
+   - Usuário não autenticado faz GET /books → 401
+3. Rodar `task test` com cobertura
+
+**Critério de aceite:**
+Todos os cenários de RBAC cobertos por testes. `task test` passa com cobertura mantida ou aumentada.
+
+---
+
+### BT-020 — Atualizar `scripts/create_user.py` para suportar `--role`
+**Prioridade:** 🟢 Baixo
+**Status:** ⬜ Não iniciado
+**Arquivos:** `scripts/create_user.py`
+
+**Problema:**
+O script de criação de usuário não permite definir o papel. Todo usuário criado pelo script seria `viewer` por padrão, sem como criar um admin facilmente.
+
+**Dependência:** BT-015 concluído.
+
+**Ação:**
+1. Adicionar argumento `--role` ao script com choices `["admin", "viewer"]` e default `"viewer"`
+2. Passar o `role` na criação do usuário
+3. Exibir o papel na mensagem de sucesso
+
+**Uso esperado:**
+```bash
+python scripts/create_user.py \
+  --email admin@booktrack.com \
+  --password minhasenha123 \
+  --role admin
+```
+
+**Critério de aceite:**
+Script aceita `--role`. Usuário criado tem o papel correto no banco.
+
+---
+
+### BT-021 — Configurar slowapi e rate limiting global
+**Prioridade:** 🟡 Médio
+**Status:** ⬜ Não iniciado
+**Arquivos:** `main.py`, `core/rate_limit.py` (novo)
+
+**Problema:**
+A API não tem proteção contra abuso. Qualquer cliente pode fazer requisições ilimitadas, sobrecarregando o servidor.
+
+**Dependência:** BT-016 concluído (precisa do `role` no JWT para identificar o usuário).
+
+**Ação:**
+1. Instalar `slowapi` via Poetry: `poetry add slowapi`
+2. Criar `booktrack_fastapi/core/rate_limit.py` com:
+   - Função `get_user_identifier()` — identifica por email do JWT ou IP como fallback
+   - Instância compartilhada do `Limiter`
+3. Registrar o `Limiter` e o handler de `429` no `main.py`
+4. Aplicar limite global de `200/minute` como proteção base
+5. Rodar `task test`
+
+**Critério de aceite:**
+`slowapi` configurado e funcionando. Requisição além do limite retorna `429` com header `Retry-After`.
+
+---
+
+### BT-022 — Aplicar limites específicos por endpoint
+**Prioridade:** 🟡 Médio
+**Status:** ⬜ Não iniciado
+**Arquivos:** todos os routers, `routers/auth.py`
+
+**Problema:**
+O limite global protege contra abuso extremo, mas endpoints críticos como login e escrita precisam de limites mais restritivos e específicos.
+
+**Dependência:** BT-021 concluído.
+
+**Ação:**
+1. Aplicar `@limiter.limit()` nos endpoints com os seguintes limites:
+
+| Endpoint | Limite | Motivo |
+|---|---|---|
+| `POST /auth/token` | 10/minuto por IP | Proteger contra brute force |
+| `POST /auth/refresh` | 10/minuto por IP | Proteger contra brute force |
+| `GET /books`, `GET /readings` | 100/minuto por usuário | Evitar scraping |
+| `GET /authors`, `GET /categories` | 100/minuto por usuário | Evitar scraping |
+| `POST`, `PUT`, `DELETE` (todos) | 30/minuto por usuário | Evitar spam de escrita |
+| `GET /health`, `GET /health/ready` | 20/minuto por IP | Monitoramento controlado |
+
+2. Rodar `task test`
+
+**Critério de aceite:**
+Cada grupo de endpoints tem seu limite aplicado. Ao exceder, retorna `429` com `Retry-After`.
+
+---
+
+### BT-023 — Escrever testes de rate limiting
+**Prioridade:** 🟢 Baixo
+**Status:** ⬜ Não iniciado
+**Arquivos:** `tests/test_rate_limit.py` (novo)
+
+**Problema:**
+Sem testes, não há garantia de que o rate limiting está funcionando e não foi quebrado por alguma alteração.
+
+**Dependência:** BT-022 concluído.
+
+**Ação:**
+1. Criar `tests/test_rate_limit.py` cobrindo:
+   - Requisições dentro do limite retornam 200
+   - Ao exceder o limite, retorna 429
+   - Response do 429 contém header `Retry-After`
+   - Endpoint de login bloqueado após 10 tentativas por IP
+2. Usar `override_dependencies` do FastAPI para simular múltiplas requisições
+3. Rodar `task test`
+
+**Critério de aceite:**
+Testes de rate limit passando. `task test` passa com cobertura mantida.
+
+
 ## Resumo
 
 | ID | Título | Prioridade | Sprint | Status |
@@ -267,7 +568,19 @@ Todas as funções públicas de `services/` e `repositories/` possuem docstrings
 | BT-005 | Implementar endpoint POST /readings | 🟡 Médio | 2 | ✅ |
 | BT-006 | Implementar filtro shelve_id em books_repo.py | 🟡 Médio | 2 | ✅ |
 | BT-007 | Implementar Dockerfile | 🟠 Médio-baixo | 3 | ✅ |
-| BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ⬜ |
-| BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ⬜ |
-| BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ⬜ |
-| BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ⬜ |
+| BT-008 | Migrar ambiente de dev para PostgreSQL | 🟠 Médio-baixo | 3 | ✅ |
+| BT-009 | Avaliar e remover Views não utilizadas | 🟢 Baixo | 4 | ✅ |
+| BT-010 | Remover arquivos de exemplo e arquivos soltos | 🟢 Baixo | 4 | ✅ |
+| BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ✅ |
+| BT-012 | Analisar e mapear CSV para os models | 🔴 Crítico | 5 | ✅ |
+| BT-013 | Implementar script de importação CSV | 🔴 Crítico | 5 | ✅ |
+| BT-014 | Validar dados importados via API      | 🟡 Médio   | 5 | ⬜ |
+| BT-015 | Adicionar campo role ao model User e migration | 🔴 Crítico | 6 | ⬜ |
+| BT-016 | Incluir role no payload do JWT               | 🔴 Crítico | 6 | ⬜ |
+| BT-017 | Criar dependências RequireAdmin e AdminUser   | 🟡 Médio   | 6 | ⬜ |
+| BT-018 | Proteger endpoints de escrita com AdminUser   | 🟡 Médio   | 6 | ⬜ |
+| BT-019 | Escrever testes de integração para RBAC       | 🟡 Médio   | 6 | ⬜ |
+| BT-020 | Atualizar create_user.py para suportar --role | 🟢 Baixo   | 6 | ⬜ |
+| BT-021 | Configurar slowapi e rate limiting global     | 🟡 Médio   | 6 | ⬜ |
+| BT-022 | Aplicar limites específicos por endpoint      | 🟡 Médio   | 6 | ⬜ |
+| BT-023 | Escrever testes de rate limiting              | 🟢 Baixo   | 6 | ⬜ |
