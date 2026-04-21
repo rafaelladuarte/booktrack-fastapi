@@ -13,7 +13,6 @@ from booktrack_fastapi.core.database import get_session
 from booktrack_fastapi.core.settings import Settings
 from booktrack_fastapi.models.users import User
 
-
 settings = Settings()
 
 SECRET_KEY = settings.SECRET_KEY
@@ -146,10 +145,8 @@ async def get_current_user(
     Raises:
         HTTPException: Se o token for inválido ou o usuário não existir
     """
-    # Verifica e decodifica o Access Token
     payload = verify_token(token, token_type='access')
 
-    # Extrai o email do subject
     subject_email = payload.get('sub')
     if not subject_email:
         raise HTTPException(
@@ -158,7 +155,6 @@ async def get_current_user(
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
-    # Busca o usuário no banco de dados
     user = await session.scalar(select(User).where(User.email == subject_email))
 
     if not user:

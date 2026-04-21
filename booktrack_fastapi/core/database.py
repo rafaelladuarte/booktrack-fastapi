@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import (
 
 from booktrack_fastapi.core.settings import Settings
 
-
 database_url = Settings().DATABASE_URL
 if database_url.startswith('sqlite://') and 'aiosqlite' not in database_url:
     database_url = database_url.replace('sqlite://', 'sqlite+aiosqlite://')

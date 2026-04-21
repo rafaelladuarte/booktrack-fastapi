@@ -1,9 +1,15 @@
 from datetime import datetime
+from enum import Enum as PyEnum
 
-from sqlalchemy import func
+from sqlalchemy import String, func
 from sqlalchemy.orm import Mapped, mapped_as_dataclass, mapped_column, registry
 
 table_registry = registry()
+
+
+class UserRole(PyEnum):
+    admin = 'admin'
+    viewer = 'viewer'
 
 
 @mapped_as_dataclass(table_registry)
@@ -18,3 +24,4 @@ class User:
     updated_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now(), onupdate=func.now()
     )
+    role: Mapped[str] = mapped_column(String(10), default='viewer')
