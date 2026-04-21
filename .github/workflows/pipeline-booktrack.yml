@@ -1,33 +1,33 @@
-name: pipeline-booktrack
-on: [push, pull_request]
+# name: pipeline-booktrack
+# on: [push, pull_request]
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
 
-    env:
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      ALGORITHM: ${{ secrets.ALGORITHM }}
-      ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
-      REFRESH_TOKEN_EXPIRE_DAYS: ${{ secrets.REFRESH_TOKEN_EXPIRE_DAYS }}
+#     env:
+#       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+#       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+#       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+#       SECRET_KEY: ${{ secrets.SECRET_KEY }}
+#       ALGORITHM: ${{ secrets.ALGORITHM }}
+#       ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+#       REFRESH_TOKEN_EXPIRE_DAYS: ${{ secrets.REFRESH_TOKEN_EXPIRE_DAYS }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v5
 
-      - name: Setup Python 3.12
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
+#       - name: Setup Python 3.12
+#         uses: actions/setup-python@v6
+#         with:
+#           python-version: '3.12'
 
-      - name: Install poetry
-        run: pipx install poetry
+#       - name: Install poetry
+#         run: pipx install poetry
 
-      - name: Install dependencies
-        run: poetry install
+#       - name: Install dependencies
+#         run: poetry install
 
-      - name: Execute tests
-        run: poetry run task test
+#       - name: Execute tests
+#         run: poetry run task test

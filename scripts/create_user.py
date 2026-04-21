@@ -10,12 +10,10 @@ from booktrack_fastapi.core.database import async_session_maker
 from booktrack_fastapi.core.security import get_password_hash
 from booktrack_fastapi.models.users import User
 
-# Regex básico para validação de e-mail
 EMAIL_REGEX = re.compile(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
 
 
-async def create_user(email: str, password: str):
-    # 1. Validações básicas
+async def create_user(email: str, password: str, role: str):
     if not EMAIL_REGEX.match(email):
         print(f"Erro: O e-mail '{email}' não tem um formato válido.")
         sys.exit(1)
@@ -26,7 +24,6 @@ async def create_user(email: str, password: str):
 
     try:
         async with async_session_maker() as session:
-            # 2. Verificar se o usuário já existe usando o e-mail
             stmt = select(User).where(User.email == email)
             existing_user = await session.scalar(stmt)
 
@@ -34,13 +31,9 @@ async def create_user(email: str, password: str):
                 print(f"Erro: Já existe um usuário cadastrado com o e-mail '{email}'.")
                 sys.exit(1)
 
-            # 3. Gerar hash da senha
             hashed_password = get_password_hash(password)
 
-            # 4. Criar e persistir o novo usuário
-            # Como o modelo possui username que requer restrição unique, usamos o prefixo do e-mail
-            # ou o próprio e-mail para garantir unicidade, pois e-mail é unique.
-            new_user = User(username=email, email=email, password=hashed_password)
+            new_user = User(username=email, email=email, password=hashed_password, role=role)
             session.add(new_user)
             await session.commit()
 
@@ -60,9 +53,12 @@ def main():
     parser.add_argument(
         '--password', required=True, help='Senha segura correspondente (min. 8 caracteres)'
     )
+    parser.add_argument(
+        '--role', required=False, help='Role do usuário', default='viewer'
+    )
     args = parser.parse_args()
 
-    asyncio.run(create_user(args.email, args.password))
+    asyncio.run(create_user(args.email, args.password, args.role))
 
 
 if __name__ == '__main__':
