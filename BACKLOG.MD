@@ -260,7 +260,7 @@ Script executa sem erros. Banco populado sem duplicações. Script é idempotent
 
 ### BT-014 — Validar dados importados via API
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivo:** Endpoints existentes
 
 **Dependência:** BT-013 concluído.
@@ -283,7 +283,7 @@ Todos os endpoints retornam dados reais com relacionamentos expandidos corretame
 
 ### BT-015 — Adicionar campo `role` ao model User e migration
 **Prioridade:** 🔴 Crítico
-**Status:** 🔄 Em Andamento
+**Status:** ✅ Concluído
 **Arquivos:** `models/users.py`, `migrations/`
 
 **Problema:**
@@ -304,7 +304,7 @@ Tabela `users` tem coluna `role`. `task test` passa.
 
 ### BT-016 — Incluir `role` no payload do JWT
 **Prioridade:** 🔴 Crítico
-**Status:** 🔄 Em Andamento
+**Status:** ✅ Concluído
 **Arquivos:** `core/security.py`, `routers/auth.py`
 
 **Dependência:** BT-015 concluído.
@@ -324,7 +324,7 @@ Token JWT contém os campos `sub` (email) e `role`. `task test` passa.
 
 ### BT-017 — Criar dependências `RequireAdmin` e `AdminUser`
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `core/dependencies.py`
 
 **Dependência:** BT-016 concluído.
@@ -540,10 +540,10 @@ Todos os cenários cobertos. `task test` passa com cobertura mantida.
 | BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ✅ |
 | BT-012 | Analisar e mapear CSV para os models | 🔴 Crítico | 5 | ✅ |
 | BT-013 | Implementar script de importação CSV | 🔴 Crítico | 5 | ✅ |
-| BT-014 | Validar dados importados via API | 🟡 Médio | 5 | 🔄 |
-| BT-015 | Adicionar campo role ao model User e migration | 🔴 Crítico | 6 | 🔄 |
-| BT-016 | Incluir role no payload do JWT | 🔴 Crítico | 6 | ⬜ |
-| BT-017 | Criar dependências RequireAdmin e AdminUser | 🟡 Médio | 6 | ⬜ |
+| BT-014 | Validar dados importados via API | 🟡 Médio | 5 | ✅ |
+| BT-015 | Adicionar campo role ao model User e migration | 🔴 Crítico | 6 | ✅ |
+| BT-016 | Incluir role no payload do JWT | 🔴 Crítico | 6 | ✅ |
+| BT-017 | Criar dependências RequireAdmin e AdminUser | 🟡 Médio | 6 | ✅ |
 | BT-018 | Proteger endpoints de escrita com AdminUser | 🟡 Médio | 6 | ⬜ |
 | BT-019 | Escrever testes de integração para RBAC | 🟡 Médio | 6 | ⬜ |
 | BT-020 | Atualizar create_user.py para suportar --role | 🟢 Baixo | 6 | ⬜ |

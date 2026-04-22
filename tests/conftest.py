@@ -97,19 +97,40 @@ def client(async_session):
 
 
 @pytest_asyncio.fixture
-async def auth_headers(async_session, async_client):
-    """Cria um usuário de teste e retorna headers com token de autenticação válido."""
+async def admin_headers(async_session, async_client):
+    """Cria um usuário admin e retorna headers com token válido."""
     user = User(
-        username='testuser_auth',
-        email='auth@test.com',
-        password=get_password_hash('testpassword'),
+        username='admin_user',
+        email='admin@test.com',
+        password=get_password_hash('adminpass'),
+        role='admin',
     )
     async_session.add(user)
     await async_session.commit()
 
     response = await async_client.post(
         '/auth/token',
-        data={'username': 'auth@test.com', 'password': 'testpassword'},
+        data={'username': 'admin@test.com', 'password': 'adminpass'},
+    )
+    token = response.json()['access_token']
+    return {'Authorization': f'Bearer {token}'}
+
+
+@pytest_asyncio.fixture
+async def viewer_headers(async_session, async_client):
+    """Cria um usuário viewer e retorna headers com token válido."""
+    user = User(
+        username='viewer_user',
+        email='viewer@test.com',
+        password=get_password_hash('viewerpass'),
+        role='viewer',
+    )
+    async_session.add(user)
+    await async_session.commit()
+
+    response = await async_client.post(
+        '/auth/token',
+        data={'username': 'viewer@test.com', 'password': 'viewerpass'},
     )
     token = response.json()['access_token']
     return {'Authorization': f'Bearer {token}'}
@@ -131,6 +152,12 @@ def _mock_db_time(*, model, time=datetime(2024, 1, 1)):
     event.listen(model, 'before_insert', fake_time_handler)
     yield time
     event.remove(model, 'before_insert', fake_time_handler)
+
+
+@pytest_asyncio.fixture
+async def auth_headers(viewer_headers):
+    """Alias para viewer_headers para manter compatibilidade."""
+    return viewer_headers
 
 
 @pytest.fixture
