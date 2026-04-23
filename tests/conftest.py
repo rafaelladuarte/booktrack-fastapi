@@ -97,8 +97,8 @@ def client(async_session):
 
 
 @pytest_asyncio.fixture
-async def admin_headers(async_session, async_client):
-    """Cria um usuário admin e retorna headers com token válido."""
+async def admin_token(async_session, async_client):
+    """Cria um usuário admin e retorna apenas o token de acesso."""
     user = User(
         username='admin_user',
         email='admin@test.com',
@@ -112,13 +112,18 @@ async def admin_headers(async_session, async_client):
         '/auth/token',
         data={'username': 'admin@test.com', 'password': 'adminpass'},
     )
-    token = response.json()['access_token']
-    return {'Authorization': f'Bearer {token}'}
+    return response.json()['access_token']
 
 
 @pytest_asyncio.fixture
-async def viewer_headers(async_session, async_client):
-    """Cria um usuário viewer e retorna headers com token válido."""
+async def admin_headers(admin_token):
+    """Retorna headers com o token de admin válido."""
+    return {'Authorization': f'Bearer {admin_token}'}
+
+
+@pytest_asyncio.fixture
+async def viewer_token(async_session, async_client):
+    """Cria um usuário viewer e retorna apenas o token de acesso."""
     user = User(
         username='viewer_user',
         email='viewer@test.com',
@@ -132,8 +137,13 @@ async def viewer_headers(async_session, async_client):
         '/auth/token',
         data={'username': 'viewer@test.com', 'password': 'viewerpass'},
     )
-    token = response.json()['access_token']
-    return {'Authorization': f'Bearer {token}'}
+    return response.json()['access_token']
+
+
+@pytest_asyncio.fixture
+async def viewer_headers(viewer_token):
+    """Retorna headers com o token de viewer válido."""
+    return {'Authorization': f'Bearer {viewer_token}'}
 
 
 # ---------------------------------------------------------------------------

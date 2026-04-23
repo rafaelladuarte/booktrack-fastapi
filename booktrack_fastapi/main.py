@@ -31,6 +31,7 @@ async def not_found_handler(request: Request, exc):
 
 
 # Rotas de autenticação (públicas)
+app.include_router(health.router)
 app.include_router(auth.router)
 
 # Rotas de recursos (protegidas)
@@ -39,4 +40,3 @@ app.include_router(categories.router)
 app.include_router(authors.router)
 app.include_router(books.router)
 app.include_router(readings.router)
-app.include_router(health.router)

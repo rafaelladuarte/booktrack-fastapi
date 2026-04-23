@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
+from booktrack_fastapi.core.dependencies import AdminUser, CurrentUser, SessionDep
 from booktrack_fastapi.schemas.categories import (
     CategoriesList,
     Category,
@@ -50,7 +50,7 @@ async def list_categories_by_id(
 async def create_categorie(
     data: CategoryCreate,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = CategoriesService(db)
     return await service.create(name=data.name, parent_id=data.parent_id)

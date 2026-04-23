@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter
 
-from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
+from booktrack_fastapi.core.dependencies import AdminUser, CurrentUser, SessionDep
 from booktrack_fastapi.models.collections import Collections
 from booktrack_fastapi.models.formats import Formats
 from booktrack_fastapi.models.publishers import Publishers
@@ -33,7 +33,7 @@ async def list_collections(
 async def create_collection(
     name: str,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = PropertiesService(db=db, model=Collections, repository_cls=PropertiesRepository)
     await service.create(name=name)
@@ -54,7 +54,7 @@ async def list_publisher(
 async def create_publisher(
     name: str,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = PropertiesService(db=db, model=Publishers, repository_cls=PropertiesRepository)
     await service.create(name=name)
@@ -75,7 +75,7 @@ async def list_tags(
 async def create_tags(
     name: str,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = PropertiesService(db=db, model=Tags, repository_cls=PropertiesRepository)
     await service.create(name=name)

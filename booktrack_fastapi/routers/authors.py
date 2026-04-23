@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from booktrack_fastapi.core.dependencies import CurrentUser
+from booktrack_fastapi.core.dependencies import AdminUser, CurrentUser
 from booktrack_fastapi.repositories.authors_repo import AuthorsRepository
 from booktrack_fastapi.schemas.authors import (
     Author,
@@ -45,7 +45,7 @@ async def list_author_by_id(
 async def create_author(
     data: AuthorCreate,
     repo: AuthorsRepo,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     return await repo.create(data.model_dump())
 
@@ -55,7 +55,7 @@ async def update_author(
     author_id: int,
     data: AuthorUpdate,
     repo: AuthorsRepo,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     item = await repo.get_by_id(author_id)
     if not item:
@@ -70,7 +70,7 @@ async def update_author(
 async def delete_author_by_id(
     author_id: int,
     repo: AuthorsRepo,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     item = await repo.get_by_id(author_id)
     if not item:

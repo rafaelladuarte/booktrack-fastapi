@@ -72,7 +72,7 @@ class TestReadingsRoutes:
         self,
         async_client: AsyncClient,
         async_session: AsyncSession,
-        auth_headers: dict,
+        admin_headers: dict,
     ):
         """
         Test PUT /readings/{book_id} - Deve atualizar uma leitura existente.
@@ -105,7 +105,7 @@ class TestReadingsRoutes:
             'personal_goal': 'Ler 50 páginas por dia',
         }
         response = await async_client.put(
-            f'/readings/{book.id}', json=update_data, headers=auth_headers
+            f'/readings/{book.id}', json=update_data, headers=admin_headers
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -115,12 +115,14 @@ class TestReadingsRoutes:
         assert reading.pages_read == 250
         assert reading.personal_goal == 'Ler 50 páginas por dia'
 
-    async def test_update_reading_not_found(self, async_client: AsyncClient, auth_headers: dict):
+    async def test_update_reading_not_found(self, async_client: AsyncClient, admin_headers: dict):
         """
         Test PUT /readings/{book_id} - Deve retornar 404 para book_id inexistente.
         """
         update_data = {'pages_read': 100}
-        response = await async_client.put('/readings/99999', json=update_data, headers=auth_headers)
+        response = await async_client.put(
+            '/readings/99999', json=update_data, headers=admin_headers
+        )
 
         assert response.status_code == HTTPStatus.NOT_FOUND
 
@@ -166,7 +168,7 @@ class TestReadingsRoutes:
         self,
         async_client: AsyncClient,
         async_session: AsyncSession,
-        auth_headers: dict,
+        admin_headers: dict,
     ):
         """
         Test POST /readings - Deve criar leitura nova retornando 201 Created.
@@ -180,7 +182,7 @@ class TestReadingsRoutes:
 
         payload = {'book_id': book.id, 'status_id': status.id, 'pages_read': 10}
 
-        response = await async_client.post('/readings', json=payload, headers=auth_headers)
+        response = await async_client.post('/readings', json=payload, headers=admin_headers)
 
         assert response.status_code == HTTPStatus.CREATED
 
@@ -190,13 +192,13 @@ class TestReadingsRoutes:
         assert data['pages_read'] == 10
 
     async def test_create_reading_book_not_found(
-        self, async_client: AsyncClient, auth_headers: dict
+        self, async_client: AsyncClient, admin_headers: dict
     ):
         """
         Test POST /readings - Deve retornar 404 se book_id for inexistente.
         """
         payload = {'book_id': 99999, 'status_id': 1}
-        response = await async_client.post('/readings', json=payload, headers=auth_headers)
+        response = await async_client.post('/readings', json=payload, headers=admin_headers)
 
         assert response.status_code == HTTPStatus.NOT_FOUND
         assert response.json()['detail'] == 'Recurso não encontrado'

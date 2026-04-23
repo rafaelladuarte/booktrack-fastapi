@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
+from booktrack_fastapi.core.dependencies import AdminUser, CurrentUser, SessionDep
 from booktrack_fastapi.schemas.books import (
     BookCreate,
     BookExpandedList,
@@ -48,7 +48,7 @@ async def list_book_by_id(
 async def create_book(
     data: BookCreate,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = BooksService(db)
     await service.create(data=data)
@@ -60,7 +60,7 @@ async def update_book(
     book_id: int,
     data: BookUpdate,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = BooksService(db)
     await service.update_by_id(book_id, data)
@@ -71,7 +71,7 @@ async def update_book(
 async def delete_book_by_id(
     book_id: int,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = BooksService(db)
     await service.delete_by_id(book_id)

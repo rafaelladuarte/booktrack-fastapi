@@ -345,7 +345,7 @@ Não existe mecanismo para bloquear endpoints por papel.
 
 ### BT-018 — Proteger endpoints de escrita com `AdminUser`
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** todos os routers
 
 **Dependência:** BT-017 concluído.
@@ -367,7 +367,7 @@ GET funciona para Admin e Viewer. POST/PUT/DELETE retornam 403 para Viewer.
 
 ### BT-019 — Escrever testes de integração para RBAC
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `tests/test_rbac.py` (novo), `tests/conftest.py`
 
 **Dependência:** BT-018 concluído.
