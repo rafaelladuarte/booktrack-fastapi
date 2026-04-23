@@ -403,8 +403,8 @@ O script não permite definir o papel do usuário na criação.
 **Uso esperado:**
 ```bash
 python scripts/create_user.py \
-  --email admin@booktrack.com \
-  --password minhasenha123 \
+  --email teste.admin@booktrack.com \
+  --password teste.admin \
   --role admin
 ```
 

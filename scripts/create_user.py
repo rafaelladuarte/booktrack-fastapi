@@ -37,7 +37,7 @@ async def create_user(email: str, password: str, role: str):
             session.add(new_user)
             await session.commit()
 
-            print(f"Sucesso: Usuário '{email}' cadastrado com exito!")
+            print(f"Sucesso: Usuário '{email}' ({role}) cadastrado com exito!")
             sys.exit(0)
 
     except SystemExit:
@@ -53,7 +53,13 @@ def main():
     parser.add_argument(
         '--password', required=True, help='Senha segura correspondente (min. 8 caracteres)'
     )
-    parser.add_argument('--role', required=False, help='Role do usuário', default='viewer')
+    parser.add_argument(
+        '--role',
+        required=False,
+        help='Role do usuário',
+        choices=['admin', 'viewer'],
+        default='viewer',
+    )
     args = parser.parse_args()
 
     asyncio.run(create_user(args.email, args.password, args.role))
