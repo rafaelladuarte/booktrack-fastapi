@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from datetime import datetime
+import redis
 
 import pytest
 import pytest_asyncio
@@ -43,6 +44,15 @@ def session():
 # ---------------------------------------------------------------------------
 # Fixtures ASSÍNCRONAS — usadas por test_auth.py e test_readings.py
 # ---------------------------------------------------------------------------
+
+@pytest.fixture(autouse=True)
+def clear_redis():
+    """Limpa o banco do Redis antes de cada teste."""
+    from booktrack_fastapi.core.settings import Settings
+    client = redis.from_url(Settings().REDIS_URL)
+    client.flushdb()
+    client.close()
+
 
 
 @pytest_asyncio.fixture

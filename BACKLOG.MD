@@ -387,7 +387,7 @@ Todos os cenários de RBAC cobertos. `task test` passa com cobertura mantida.
 
 ### BT-020 — Atualizar `scripts/create_user.py` para suportar `--role`
 **Prioridade:** 🟢 Baixo
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `scripts/create_user.py`
 
 **Dependência:** BT-015 concluído.
@@ -415,7 +415,7 @@ Script aceita `--role`. Usuário criado tem o papel correto no banco.
 
 ### BT-021 — Adicionar Redis ao docker-compose e variáveis de ambiente
 **Prioridade:** 🔴 Crítico
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `docker-compose.yml`, `.env`, `.env.example`, `booktrack_fastapi/core/settings.py`
 
 **Dependência:** BT-016 concluído.
@@ -445,7 +445,7 @@ Serviço `redis` rodando e `healthy`. `Settings().REDIS_URL` disponível. `task 
 
 ### BT-022 — Instalar slowapi e configurar com Redis
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `main.py`, `booktrack_fastapi/core/rate_limit.py` (novo)
 
 **Dependência:** BT-021 concluído.
@@ -472,7 +472,7 @@ Sem slowapi configurado com Redis, não há rate limiting funcionando.
 
 ### BT-023 — Aplicar limites específicos por endpoint
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** todos os routers
 
 **Dependência:** BT-022 concluído.
@@ -500,7 +500,7 @@ Cada grupo de endpoints tem seu limite aplicado. Ao exceder, retorna `429` com `
 
 ### BT-024 — Escrever testes de rate limiting
 **Prioridade:** 🟢 Baixo
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `tests/test_rate_limit.py` (novo), `tests/conftest.py`
 
 **Dependência:** BT-023 concluído.
@@ -544,10 +544,10 @@ Todos os cenários cobertos. `task test` passa com cobertura mantida.
 | BT-015 | Adicionar campo role ao model User e migration | 🔴 Crítico | 6 | ✅ |
 | BT-016 | Incluir role no payload do JWT | 🔴 Crítico | 6 | ✅ |
 | BT-017 | Criar dependências RequireAdmin e AdminUser | 🟡 Médio | 6 | ✅ |
-| BT-018 | Proteger endpoints de escrita com AdminUser | 🟡 Médio | 6 | ⬜ |
-| BT-019 | Escrever testes de integração para RBAC | 🟡 Médio | 6 | ⬜ |
-| BT-020 | Atualizar create_user.py para suportar --role | 🟢 Baixo | 6 | ⬜ |
-| BT-021 | Adicionar Redis ao docker-compose e variáveis | 🔴 Crítico | 6 | ⬜ |
-| BT-022 | Instalar slowapi e configurar com Redis | 🟡 Médio | 6 | ⬜ |
-| BT-023 | Aplicar limites específicos por endpoint | 🟡 Médio | 6 | ⬜ |
-| BT-024 | Escrever testes de rate limiting | 🟢 Baixo | 6 | ⬜ |
+| BT-018 | Proteger endpoints de escrita com AdminUser | 🟡 Médio | 6 | ✅  |
+| BT-019 | Escrever testes de integração para RBAC | 🟡 Médio | 6 | ✅  |
+| BT-020 | Atualizar create_user.py para suportar --role | 🟢 Baixo | 6 | ✅  |
+| BT-021 | Adicionar Redis ao docker-compose e variáveis | 🔴 Crítico | 6 | ✅  |
+| BT-022 | Instalar slowapi e configurar com Redis | 🟡 Médio | 6 | ✅ |
+| BT-023 | Aplicar limites específicos por endpoint | 🟡 Médio | 6 | ✅ |
+| BT-024 | Escrever testes de rate limiting | 🟢 Baixo | 6 | ✅ |

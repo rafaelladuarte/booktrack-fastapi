@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +14,8 @@ from booktrack_fastapi.core.security import (
 )
 from booktrack_fastapi.models.users import User
 from booktrack_fastapi.schemas.users import TokenResponse
+from booktrack_fastapi.core.rate_limit import limiter
+from slowapi.util import get_remote_address
 
 router = APIRouter(prefix='/auth', tags=['Authentication'])
 
@@ -21,7 +23,9 @@ oauth2_scheme_refresh = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 
 @router.post('/token', response_model=TokenResponse)
+@limiter.limit('10/minute', key_func=get_remote_address)
 async def login_for_access_token(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_session),
 ):
@@ -50,7 +54,9 @@ async def login_for_access_token(
 
 
 @router.post('/refresh', response_model=TokenResponse)
+@limiter.limit('10/minute', key_func=get_remote_address)
 async def refresh_access_token(
+    request: Request,
     token: str = Depends(oauth2_scheme_refresh),
     session: AsyncSession = Depends(get_session),
 ):
