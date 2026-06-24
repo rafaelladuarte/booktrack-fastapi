@@ -1,9 +1,10 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
+from booktrack_fastapi.core.rate_limit import limiter
 
-from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
+from booktrack_fastapi.core.dependencies import AdminUser, CurrentUser, SessionDep
 from booktrack_fastapi.schemas.categories import (
     CategoriesList,
     Category,
@@ -16,7 +17,9 @@ router = APIRouter(prefix='/categories', tags=['Categories'])
 
 
 @router.get('', response_model=CategoriesList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_categories(
+    request: Request,
     filter_query: Annotated[CategoryParentFilter, Query()],
     db: SessionDep,
     current_user: CurrentUser,
@@ -37,7 +40,9 @@ async def list_categories(
 
 
 @router.get('/{category_id}', response_model=Category, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_categories_by_id(
+    request: Request,
     category_id: int,
     db: SessionDep,
     current_user: CurrentUser,
@@ -47,10 +52,12 @@ async def list_categories_by_id(
 
 
 @router.post('', response_model=Category, status_code=HTTPStatus.CREATED)
+@limiter.limit('30/minute')
 async def create_categorie(
+    request: Request,
     data: CategoryCreate,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = CategoriesService(db)
     return await service.create(name=data.name, parent_id=data.parent_id)

@@ -16,6 +16,8 @@ pwdlib = {extras = ["argon2"], version = "^0.3.0"}
 pandas = "^2.3.3"
 aiosqlite = "^0.22.0"
 asyncpg = "^0.31.0"
+slowapi = "^0.1.9"
+redis = "^7.4.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.4.2"

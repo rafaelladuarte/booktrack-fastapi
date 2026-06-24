@@ -260,7 +260,7 @@ Script executa sem erros. Banco populado sem duplicações. Script é idempotent
 
 ### BT-014 — Validar dados importados via API
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivo:** Endpoints existentes
 
 **Dependência:** BT-013 concluído.
@@ -283,7 +283,7 @@ Todos os endpoints retornam dados reais com relacionamentos expandidos corretame
 
 ### BT-015 — Adicionar campo `role` ao model User e migration
 **Prioridade:** 🔴 Crítico
-**Status:** 🔄 Em Andamento
+**Status:** ✅ Concluído
 **Arquivos:** `models/users.py`, `migrations/`
 
 **Problema:**
@@ -304,7 +304,7 @@ Tabela `users` tem coluna `role`. `task test` passa.
 
 ### BT-016 — Incluir `role` no payload do JWT
 **Prioridade:** 🔴 Crítico
-**Status:** 🔄 Em Andamento
+**Status:** ✅ Concluído
 **Arquivos:** `core/security.py`, `routers/auth.py`
 
 **Dependência:** BT-015 concluído.
@@ -324,7 +324,7 @@ Token JWT contém os campos `sub` (email) e `role`. `task test` passa.
 
 ### BT-017 — Criar dependências `RequireAdmin` e `AdminUser`
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `core/dependencies.py`
 
 **Dependência:** BT-016 concluído.
@@ -345,7 +345,7 @@ Não existe mecanismo para bloquear endpoints por papel.
 
 ### BT-018 — Proteger endpoints de escrita com `AdminUser`
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** todos os routers
 
 **Dependência:** BT-017 concluído.
@@ -367,7 +367,7 @@ GET funciona para Admin e Viewer. POST/PUT/DELETE retornam 403 para Viewer.
 
 ### BT-019 — Escrever testes de integração para RBAC
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `tests/test_rbac.py` (novo), `tests/conftest.py`
 
 **Dependência:** BT-018 concluído.
@@ -387,7 +387,7 @@ Todos os cenários de RBAC cobertos. `task test` passa com cobertura mantida.
 
 ### BT-020 — Atualizar `scripts/create_user.py` para suportar `--role`
 **Prioridade:** 🟢 Baixo
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `scripts/create_user.py`
 
 **Dependência:** BT-015 concluído.
@@ -403,8 +403,8 @@ O script não permite definir o papel do usuário na criação.
 **Uso esperado:**
 ```bash
 python scripts/create_user.py \
-  --email admin@booktrack.com \
-  --password minhasenha123 \
+  --email teste.admin@booktrack.com \
+  --password teste.admin \
   --role admin
 ```
 
@@ -415,7 +415,7 @@ Script aceita `--role`. Usuário criado tem o papel correto no banco.
 
 ### BT-021 — Adicionar Redis ao docker-compose e variáveis de ambiente
 **Prioridade:** 🔴 Crítico
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `docker-compose.yml`, `.env`, `.env.example`, `booktrack_fastapi/core/settings.py`
 
 **Dependência:** BT-016 concluído.
@@ -445,7 +445,7 @@ Serviço `redis` rodando e `healthy`. `Settings().REDIS_URL` disponível. `task 
 
 ### BT-022 — Instalar slowapi e configurar com Redis
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `main.py`, `booktrack_fastapi/core/rate_limit.py` (novo)
 
 **Dependência:** BT-021 concluído.
@@ -472,7 +472,7 @@ Sem slowapi configurado com Redis, não há rate limiting funcionando.
 
 ### BT-023 — Aplicar limites específicos por endpoint
 **Prioridade:** 🟡 Médio
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** todos os routers
 
 **Dependência:** BT-022 concluído.
@@ -500,7 +500,7 @@ Cada grupo de endpoints tem seu limite aplicado. Ao exceder, retorna `429` com `
 
 ### BT-024 — Escrever testes de rate limiting
 **Prioridade:** 🟢 Baixo
-**Status:** ⬜ Não iniciado
+**Status:** ✅ Concluído
 **Arquivos:** `tests/test_rate_limit.py` (novo), `tests/conftest.py`
 
 **Dependência:** BT-023 concluído.
@@ -540,14 +540,14 @@ Todos os cenários cobertos. `task test` passa com cobertura mantida.
 | BT-011 | Adicionar docstrings em services e repositories | 🟢 Baixo | 4 | ✅ |
 | BT-012 | Analisar e mapear CSV para os models | 🔴 Crítico | 5 | ✅ |
 | BT-013 | Implementar script de importação CSV | 🔴 Crítico | 5 | ✅ |
-| BT-014 | Validar dados importados via API | 🟡 Médio | 5 | 🔄 |
-| BT-015 | Adicionar campo role ao model User e migration | 🔴 Crítico | 6 | 🔄 |
-| BT-016 | Incluir role no payload do JWT | 🔴 Crítico | 6 | ⬜ |
-| BT-017 | Criar dependências RequireAdmin e AdminUser | 🟡 Médio | 6 | ⬜ |
-| BT-018 | Proteger endpoints de escrita com AdminUser | 🟡 Médio | 6 | ⬜ |
-| BT-019 | Escrever testes de integração para RBAC | 🟡 Médio | 6 | ⬜ |
-| BT-020 | Atualizar create_user.py para suportar --role | 🟢 Baixo | 6 | ⬜ |
-| BT-021 | Adicionar Redis ao docker-compose e variáveis | 🔴 Crítico | 6 | ⬜ |
-| BT-022 | Instalar slowapi e configurar com Redis | 🟡 Médio | 6 | ⬜ |
-| BT-023 | Aplicar limites específicos por endpoint | 🟡 Médio | 6 | ⬜ |
-| BT-024 | Escrever testes de rate limiting | 🟢 Baixo | 6 | ⬜ |
+| BT-014 | Validar dados importados via API | 🟡 Médio | 5 | ✅ |
+| BT-015 | Adicionar campo role ao model User e migration | 🔴 Crítico | 6 | ✅ |
+| BT-016 | Incluir role no payload do JWT | 🔴 Crítico | 6 | ✅ |
+| BT-017 | Criar dependências RequireAdmin e AdminUser | 🟡 Médio | 6 | ✅ |
+| BT-018 | Proteger endpoints de escrita com AdminUser | 🟡 Médio | 6 | ✅  |
+| BT-019 | Escrever testes de integração para RBAC | 🟡 Médio | 6 | ✅  |
+| BT-020 | Atualizar create_user.py para suportar --role | 🟢 Baixo | 6 | ✅  |
+| BT-021 | Adicionar Redis ao docker-compose e variáveis | 🔴 Crítico | 6 | ✅  |
+| BT-022 | Instalar slowapi e configurar com Redis | 🟡 Médio | 6 | ✅ |
+| BT-023 | Aplicar limites específicos por endpoint | 🟡 Médio | 6 | ✅ |
+| BT-024 | Escrever testes de rate limiting | 🟢 Baixo | 6 | ✅ |

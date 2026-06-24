@@ -1,8 +1,9 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
+from booktrack_fastapi.core.rate_limit import limiter
 
-from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
+from booktrack_fastapi.core.dependencies import AdminUser, CurrentUser, SessionDep
 from booktrack_fastapi.models.collections import Collections
 from booktrack_fastapi.models.formats import Formats
 from booktrack_fastapi.models.publishers import Publishers
@@ -20,7 +21,9 @@ router = APIRouter(tags=['Properties'])
 
 
 @router.get('/collections', response_model=PropertyList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_collections(
+    request: Request,
     db: SessionDep,
     current_user: CurrentUser,
 ):
@@ -30,10 +33,12 @@ async def list_collections(
 
 
 @router.post('/collections', response_model=PropertyCreate, status_code=HTTPStatus.CREATED)
+@limiter.limit('30/minute')
 async def create_collection(
+    request: Request,
     name: str,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = PropertiesService(db=db, model=Collections, repository_cls=PropertiesRepository)
     await service.create(name=name)
@@ -41,7 +46,9 @@ async def create_collection(
 
 
 @router.get('/publishers', response_model=PropertyList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_publisher(
+    request: Request,
     db: SessionDep,
     current_user: CurrentUser,
 ):
@@ -51,10 +58,12 @@ async def list_publisher(
 
 
 @router.post('/publishers', status_code=HTTPStatus.CREATED)
+@limiter.limit('30/minute')
 async def create_publisher(
+    request: Request,
     name: str,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = PropertiesService(db=db, model=Publishers, repository_cls=PropertiesRepository)
     await service.create(name=name)
@@ -62,7 +71,9 @@ async def create_publisher(
 
 
 @router.get('/tags', response_model=PropertyList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_tags(
+    request: Request,
     db: SessionDep,
     current_user: CurrentUser,
 ):
@@ -72,10 +83,12 @@ async def list_tags(
 
 
 @router.post('/tags', status_code=HTTPStatus.CREATED)
+@limiter.limit('30/minute')
 async def create_tags(
+    request: Request,
     name: str,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = PropertiesService(db=db, model=Tags, repository_cls=PropertiesRepository)
     await service.create(name=name)
@@ -83,7 +96,9 @@ async def create_tags(
 
 
 @router.get('/shelves', response_model=PropertyList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_shelves(
+    request: Request,
     db: SessionDep,
     current_user: CurrentUser,
 ):
@@ -93,7 +108,9 @@ async def list_shelves(
 
 
 @router.get('/reading_status', response_model=PropertyList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_reading_status(
+    request: Request,
     db: SessionDep,
     current_user: CurrentUser,
 ):
@@ -103,7 +120,9 @@ async def list_reading_status(
 
 
 @router.get('/formats', response_model=PropertyList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_formats(
+    request: Request,
     db: SessionDep,
     current_user: CurrentUser,
 ):

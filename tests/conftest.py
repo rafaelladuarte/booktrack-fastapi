@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from datetime import datetime
+import redis
 
 import pytest
 import pytest_asyncio
@@ -43,6 +44,15 @@ def session():
 # ---------------------------------------------------------------------------
 # Fixtures ASSÍNCRONAS — usadas por test_auth.py e test_readings.py
 # ---------------------------------------------------------------------------
+
+@pytest.fixture(autouse=True)
+def clear_redis():
+    """Limpa o banco do Redis antes de cada teste."""
+    from booktrack_fastapi.core.settings import Settings
+    client = redis.from_url(Settings().REDIS_URL)
+    client.flushdb()
+    client.close()
+
 
 
 @pytest_asyncio.fixture
@@ -97,22 +107,53 @@ def client(async_session):
 
 
 @pytest_asyncio.fixture
-async def auth_headers(async_session, async_client):
-    """Cria um usuário de teste e retorna headers com token de autenticação válido."""
+async def admin_token(async_session, async_client):
+    """Cria um usuário admin e retorna apenas o token de acesso."""
     user = User(
-        username='testuser_auth',
-        email='auth@test.com',
-        password=get_password_hash('testpassword'),
+        username='admin_user',
+        email='admin@test.com',
+        password=get_password_hash('adminpass'),
+        role='admin',
     )
     async_session.add(user)
     await async_session.commit()
 
     response = await async_client.post(
         '/auth/token',
-        data={'username': 'auth@test.com', 'password': 'testpassword'},
+        data={'username': 'admin@test.com', 'password': 'adminpass'},
     )
-    token = response.json()['access_token']
-    return {'Authorization': f'Bearer {token}'}
+    return response.json()['access_token']
+
+
+@pytest_asyncio.fixture
+async def admin_headers(admin_token):
+    """Retorna headers com o token de admin válido."""
+    return {'Authorization': f'Bearer {admin_token}'}
+
+
+@pytest_asyncio.fixture
+async def viewer_token(async_session, async_client):
+    """Cria um usuário viewer e retorna apenas o token de acesso."""
+    user = User(
+        username='viewer_user',
+        email='viewer@test.com',
+        password=get_password_hash('viewerpass'),
+        role='viewer',
+    )
+    async_session.add(user)
+    await async_session.commit()
+
+    response = await async_client.post(
+        '/auth/token',
+        data={'username': 'viewer@test.com', 'password': 'viewerpass'},
+    )
+    return response.json()['access_token']
+
+
+@pytest_asyncio.fixture
+async def viewer_headers(viewer_token):
+    """Retorna headers com o token de viewer válido."""
+    return {'Authorization': f'Bearer {viewer_token}'}
 
 
 # ---------------------------------------------------------------------------
@@ -131,6 +172,12 @@ def _mock_db_time(*, model, time=datetime(2024, 1, 1)):
     event.listen(model, 'before_insert', fake_time_handler)
     yield time
     event.remove(model, 'before_insert', fake_time_handler)
+
+
+@pytest_asyncio.fixture
+async def auth_headers(viewer_headers):
+    """Alias para viewer_headers para manter compatibilidade."""
+    return viewer_headers
 
 
 @pytest.fixture

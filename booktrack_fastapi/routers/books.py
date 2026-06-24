@@ -1,9 +1,10 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
+from booktrack_fastapi.core.rate_limit import limiter
 
-from booktrack_fastapi.core.dependencies import CurrentUser, SessionDep
+from booktrack_fastapi.core.dependencies import AdminUser, CurrentUser, SessionDep
 from booktrack_fastapi.schemas.books import (
     BookCreate,
     BookExpandedList,
@@ -16,7 +17,9 @@ router = APIRouter(prefix='/books', tags=['Books'])
 
 
 @router.get('', response_model=BookExpandedList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_book(
+    request: Request,
     filter_query: Annotated[BookFilter, Query()],
     db: SessionDep,
     current_user: CurrentUser,
@@ -33,7 +36,9 @@ async def list_book(
 
 
 @router.get('/{book_id}', response_model=BookExpandedList, status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
 async def list_book_by_id(
+    request: Request,
     book_id: int,
     db: SessionDep,
     current_user: CurrentUser,
@@ -45,10 +50,12 @@ async def list_book_by_id(
 
 
 @router.post('', status_code=HTTPStatus.CREATED)
+@limiter.limit('30/minute')
 async def create_book(
+    request: Request,
     data: BookCreate,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = BooksService(db)
     await service.create(data=data)
@@ -56,11 +63,13 @@ async def create_book(
 
 
 @router.put('/{book_id}', status_code=HTTPStatus.OK)
+@limiter.limit('30/minute')
 async def update_book(
+    request: Request,
     book_id: int,
     data: BookUpdate,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = BooksService(db)
     await service.update_by_id(book_id, data)
@@ -68,10 +77,12 @@ async def update_book(
 
 
 @router.delete('/{book_id}', status_code=HTTPStatus.OK)
+@limiter.limit('30/minute')
 async def delete_book_by_id(
+    request: Request,
     book_id: int,
     db: SessionDep,
-    current_user: CurrentUser,
+    current_user: AdminUser,
 ):
     service = BooksService(db)
     await service.delete_by_id(book_id)
