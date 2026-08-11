@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from booktrack_fastapi.models.associations import readings_shelves, readings_tags
+from booktrack_fastapi.models.authors import Authors
 from booktrack_fastapi.models.books import Books
 from booktrack_fastapi.models.categories import Categories
 from booktrack_fastapi.models.readings import Readings
@@ -46,6 +47,9 @@ class BooksRepository:
                 selectinload(Books.format),
                 selectinload(Books.author),
                 selectinload(Books.category),
+                selectinload(Books.readings).selectinload(Readings.status),
+                selectinload(Books.readings).selectinload(Readings.tags),
+                selectinload(Books.readings).selectinload(Readings.shelves),
             )
         )
         result = await self.db.scalars(stmt)
@@ -116,6 +120,16 @@ class BooksRepository:
 
         if filters.get('author_id'):
             conditions.append(Books.author_id == filters['author_id'])
+
+        needs_authors_join = any(filters.get(k) for k in ('author_name', 'author_country', 'author_gender'))
+        if needs_authors_join:
+            stmt = stmt.join(Authors, Books.author_id == Authors.id)
+            if filters.get('author_name'):
+                conditions.append(Authors.name.ilike(f'%{filters["author_name"]}%'))
+            if filters.get('author_country'):
+                conditions.append(Authors.country_of_origin.ilike(filters['author_country']))
+            if filters.get('author_gender'):
+                conditions.append(Authors.gender == filters['author_gender'])
 
         if filters.get('category_id'):
             descendant_ids = await self._get_descendant_category_ids(filters['category_id'])

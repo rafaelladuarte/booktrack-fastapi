@@ -1,6 +1,7 @@
+from datetime import date
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Book(BaseModel):
@@ -55,6 +56,9 @@ class BookFilter(BaseModel):
     collection_id: Optional[int] = Field(None, description='Filtrar por ID da coleção')
     format_id: Optional[int] = Field(None, description='Filtrar por ID do formato')
     author_id: Optional[int] = Field(None, description='Filtrar por ID do escritor')
+    author_name: Optional[str] = Field(None, description='Filtrar por parte do nome do autor')
+    author_country: Optional[str] = Field(None, description='Filtrar pelo país de origem do autor')
+    author_gender: Optional[str] = Field(None, description='Filtrar pelo gênero do autor')
     category_id: Optional[int] = Field(None, description='Filtrar por ID da categoria')
     shelve_id: Optional[int] = Field(None, description='Filtrar por ID da estante')
     tag_id: Optional[int] = Field(None, description='Filtrar por ID da tag (via leituras)')
@@ -111,3 +115,38 @@ class BookExpanded(BaseModel):
 
 class BookExpandedList(BaseModel):
     data: list[BookExpanded]
+
+
+class ReadingStatusSimple(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    name: str
+
+
+class ReadingSimple(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    pages_read: Optional[int] = None
+    status: Optional[ReadingStatusSimple] = None
+    tags: list[str] = []
+    shelves: list[str] = []
+    
+    @field_validator('tags', 'shelves', mode='before')
+    @classmethod
+    def validate_tags_shelves(cls, v):
+        if isinstance(v, list):
+            return [getattr(item, 'name', str(item)) for item in v]
+        return v
+    
+    # Need to import field_validator for this, we'll do it cleanly without field_validator if possible,
+    # or just add the import at the top. Let's add the import to the top of the file in another chunk.
+
+
+class BookDetail(BookExpanded):
+    readings: list[ReadingSimple] = []
+
+
+class BookDetailList(BaseModel):
+    data: list[BookDetail]

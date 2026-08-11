@@ -29,6 +29,17 @@ async def list_author(
     return {'data': items}
 
 
+@router.get('/countries', status_code=HTTPStatus.OK)
+@limiter.limit('100/minute')
+async def list_author_countries(
+    request: Request,
+    repo: AuthorsRepo,
+    current_user: CurrentUser,
+):
+    items = await repo.get_countries()
+    return {'data': items}
+
+
 @router.get('/{author_id}', response_model=AuthorList, status_code=HTTPStatus.OK)
 @limiter.limit('100/minute')
 async def list_author_by_id(

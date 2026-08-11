@@ -8,6 +8,7 @@ from booktrack_fastapi.core.dependencies import AdminUser, CurrentUser, SessionD
 from booktrack_fastapi.schemas.books import (
     BookCreate,
     BookExpandedList,
+    BookDetailList,
     BookFilter,
     BookUpdate,
 )
@@ -35,7 +36,7 @@ async def list_book(
     return {'data': items}
 
 
-@router.get('/{book_id}', response_model=BookExpandedList, status_code=HTTPStatus.OK)
+@router.get('/{book_id}', response_model=BookDetailList, status_code=HTTPStatus.OK)
 @limiter.limit('100/minute')
 async def list_book_by_id(
     request: Request,

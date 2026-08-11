@@ -68,3 +68,18 @@ class AuthorsRepository:
         stmt = delete(Authors).where(Authors.id == author_id)
         await self.db.execute(stmt)
         await self.db.commit()
+
+    async def get_countries(self):
+        """Retorna uma lista de países únicos dos autores cadastrados.
+        
+        Returns:
+            Lista de strings representando os países.
+        """
+        stmt = (
+            select(Authors.country_of_origin)
+            .where(Authors.country_of_origin.isnot(None))
+            .distinct()
+            .order_by(Authors.country_of_origin)
+        )
+        result = await self.db.scalars(stmt)
+        return list(result.all())
