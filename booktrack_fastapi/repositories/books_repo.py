@@ -2,8 +2,9 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from booktrack_fastapi.models.associations import readings_shelves
+from booktrack_fastapi.models.associations import readings_shelves, readings_tags
 from booktrack_fastapi.models.books import Books
+from booktrack_fastapi.models.categories import Categories
 from booktrack_fastapi.models.readings import Readings
 
 
@@ -56,7 +57,7 @@ class BooksRepository:
         Args:
             filters: Dicionário contendo os campos de filtro.
                 Suporta: title, year, publisher_id/publish_id, collection_id,
-                format_id, author_id, category_id e shelve_id.
+                format_id, author_id, category_id, shelve_id, tag_id e status_id.
 
         Returns:
             Lista de objetos Books carregados com relacionamentos.
@@ -69,14 +70,30 @@ class BooksRepository:
             selectinload(Books.category),
         )
 
+        # Filtros que requerem JOIN na tabela Readings
+        needs_readings_join = any(filters.get(k) for k in ('shelve_id', 'tag_id', 'status_id'))
+        if needs_readings_join:
+            stmt = stmt.join(Readings, Readings.book_id == Books.id)
+
         if filters.get('shelve_id'):
             stmt = (
                 stmt
-                .join(Readings)
-                .join(readings_shelves)
+                .join(readings_shelves, readings_shelves.c.reading_id == Readings.id)
                 .where(readings_shelves.c.shelf_id == filters['shelve_id'])
-                .distinct()
             )
+
+        if filters.get('tag_id'):
+            stmt = (
+                stmt
+                .join(readings_tags, readings_tags.c.reading_id == Readings.id)
+                .where(readings_tags.c.tag_id == filters['tag_id'])
+            )
+
+        if filters.get('status_id'):
+            stmt = stmt.where(Readings.status_id == filters['status_id'])
+
+        if needs_readings_join:
+            stmt = stmt.distinct()
 
         conditions = []
 
@@ -101,13 +118,33 @@ class BooksRepository:
             conditions.append(Books.author_id == filters['author_id'])
 
         if filters.get('category_id'):
-            conditions.append(Books.category_id == filters['category_id'])
+            descendant_ids = await self._get_descendant_category_ids(filters['category_id'])
+            conditions.append(Books.category_id.in_(descendant_ids))
 
         if conditions:
             stmt = stmt.where(*conditions)
 
         result = await self.db.scalars(stmt)
         return result.all()
+
+    async def _get_descendant_category_ids(self, category_id: int) -> list[int]:
+        """Retorna o ID da categoria + todos os IDs descendentes (filhos e netos)."""
+        all_ids = [category_id]
+
+        # Nível 2: filhos diretos
+        stmt = select(Categories.id).where(Categories.parent_id == category_id)
+        result = await self.db.scalars(stmt)
+        children_ids = list(result.all())
+        all_ids.extend(children_ids)
+
+        # Nível 3: netos (filhos dos filhos)
+        if children_ids:
+            stmt = select(Categories.id).where(Categories.parent_id.in_(children_ids))
+            result = await self.db.scalars(stmt)
+            grandchildren_ids = list(result.all())
+            all_ids.extend(grandchildren_ids)
+
+        return all_ids
 
     async def create(
         self,

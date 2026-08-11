@@ -57,6 +57,8 @@ class BookFilter(BaseModel):
     author_id: Optional[int] = Field(None, description='Filtrar por ID do escritor')
     category_id: Optional[int] = Field(None, description='Filtrar por ID da categoria')
     shelve_id: Optional[int] = Field(None, description='Filtrar por ID da estante')
+    tag_id: Optional[int] = Field(None, description='Filtrar por ID da tag (via leituras)')
+    status_id: Optional[int] = Field(None, description='Filtrar por ID do status de leitura')
 
 
 class AuthorSchema(BaseModel):
