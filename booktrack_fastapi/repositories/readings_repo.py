@@ -159,11 +159,40 @@ class ReadingsRepository:
         Returns:
             A instância de Readings atualizada.
         """
-        stmt = update(Readings).where(Readings.book_id == book_id).values(**parameters)
-        await self.db.execute(stmt)
+        reading = await self.get_by_book_id(book_id)
+        if not reading:
+            return None
+
+        tag_ids = parameters.pop('tag_ids', None)
+        shelf_ids = parameters.pop('shelf_ids', None)
+
+        if parameters:
+            stmt = update(Readings).where(Readings.book_id == book_id).values(**parameters)
+            await self.db.execute(stmt)
+
+        if tag_ids is not None:
+            if tag_ids:
+                from booktrack_fastapi.models.tags import Tags
+                stmt_tags = select(Tags).where(Tags.id.in_(tag_ids))
+                tags = await self.db.scalars(stmt_tags)
+                reading.tags = list(tags.all())
+            else:
+                reading.tags = []
+
+        if shelf_ids is not None:
+            if shelf_ids:
+                from booktrack_fastapi.models.shelves import Shelves
+                stmt_shelves = select(Shelves).where(Shelves.id.in_(shelf_ids))
+                shelves = await self.db.scalars(stmt_shelves)
+                reading.shelves = list(shelves.all())
+            else:
+                reading.shelves = []
+
+        if tag_ids is not None or shelf_ids is not None:
+            # Necessário adicionar à sessão para persistir as relações do ORM
+            self.db.add(reading)
+            
         await self.db.commit()
 
         # Helper to get fresh object
-        stmt_refresh = select(Readings).where(Readings.book_id == book_id)
-        result = await self.db.scalars(stmt_refresh)
-        return result.first()
+        return await self.get_by_book_id(book_id)

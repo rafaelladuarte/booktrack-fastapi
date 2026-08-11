@@ -55,6 +55,8 @@ class ReadingUpdate(BaseModel):
     personal_goal: Optional[str] = Field(None, description='Atualizar objetivo pessoal')
     club_date: Optional[str] = Field(None, description='Atualizar data do Clube do Livro')
     start_date: Optional[str] = Field(None, description='Atualizar data de início')
+    tag_ids: Optional[list[int]] = Field(None, description='Atualizar IDs das tags associadas')
+    shelf_ids: Optional[list[int]] = Field(None, description='Atualizar IDs das estantes associadas')
 
 
 class ReadingCreate(BaseModel):
