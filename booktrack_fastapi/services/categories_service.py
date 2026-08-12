@@ -119,3 +119,69 @@ class CategoriesService:
             Lista de categorias que atendem aos filtros informados.
         """
         return await self.repo.get_filtered(**filters)
+
+    async def update(self, category_id: int, data: dict, min_length: int = 2):
+        item = await self.get_by_id(category_id)
+        
+        name = data.get('name', item.name)
+        if name:
+            name = name.strip()
+            if len(name) < min_length:
+                raise HTTPException(
+                    status_code=HTTPStatus.BAD_REQUEST, 
+                    detail=f'Name must be at least {min_length} chars.'
+                )
+                
+        parent_id = data.get('parent_id', item.parent_id)
+        
+        if name != item.name or parent_id != item.parent_id:
+            existing = await self.repo.get_by_name_and_parent(name, parent_id)
+            if existing and any(e.id != category_id for e in existing):
+                raise HTTPException(
+                    status_code=HTTPStatus.BAD_REQUEST, 
+                    detail="Category already exists at this level."
+                )
+                
+        if parent_id is not None and parent_id != item.parent_id:
+            if parent_id == category_id:
+                raise HTTPException(
+                    status_code=HTTPStatus.BAD_REQUEST, 
+                    detail="Category cannot be its own parent."
+                )
+            parent = await self.repo.get_by_id(parent_id)
+            if not parent:
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND, 
+                    detail=f'Parent_id {parent_id} not found.'
+                )
+                
+        kwargs = {}
+        if 'name' in data: kwargs['name'] = name
+        if 'parent_id' in data: kwargs['parent_id'] = parent_id
+        
+        if not kwargs:
+            return item
+            
+        return await self.repo.update(category_id, **kwargs)
+
+    async def delete(self, category_id: int):
+        await self.get_by_id(category_id) # validates existence
+        
+        # Check if it has children
+        children = await self.repo.get_by_parent_id(category_id)
+        if children:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST, 
+                detail="Cannot delete category with subcategories."
+            )
+            
+        try:
+            success = await self.repo.delete(category_id)
+            if not success:
+                raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Category not found.")
+        except Exception:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST, 
+                detail="Cannot delete category because it is in use."
+            )
+

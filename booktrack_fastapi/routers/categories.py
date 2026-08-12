@@ -10,6 +10,7 @@ from booktrack_fastapi.schemas.categories import (
     Category,
     CategoryCreate,
     CategoryParentFilter,
+    CategoryUpdate,
 )
 from booktrack_fastapi.services.categories_service import CategoriesService
 
@@ -61,3 +62,27 @@ async def create_categorie(
 ):
     service = CategoriesService(db)
     return await service.create(name=data.name, parent_id=data.parent_id)
+
+@router.put('/{category_id}', response_model=Category, status_code=HTTPStatus.OK)
+@limiter.limit('30/minute')
+async def update_categorie(
+    request: Request,
+    category_id: int,
+    data: CategoryUpdate,
+    db: SessionDep,
+    current_user: AdminUser,
+):
+    service = CategoriesService(db)
+    return await service.update(category_id, data.model_dump(exclude_unset=True))
+
+@router.delete('/{category_id}', status_code=HTTPStatus.OK)
+@limiter.limit('30/minute')
+async def delete_categorie(
+    request: Request,
+    category_id: int,
+    db: SessionDep,
+    current_user: AdminUser,
+):
+    service = CategoriesService(db)
+    await service.delete(category_id)
+    return {'detail': 'Category deleted successfully.'}

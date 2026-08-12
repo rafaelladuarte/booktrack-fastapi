@@ -91,3 +91,27 @@ class CategoriesRepository:
         await self.db.commit()
         await self.db.refresh(item)
         return item
+
+    async def update(self, category_id: int, **kwargs):
+        """Atualiza uma categoria existente."""
+        item = await self.get_by_id(category_id)
+        if not item:
+            return None
+        
+        for key, value in kwargs.items():
+            if hasattr(item, key):
+                setattr(item, key, value)
+                
+        await self.db.commit()
+        await self.db.refresh(item)
+        return item
+
+    async def delete(self, category_id: int):
+        """Exclui uma categoria."""
+        item = await self.get_by_id(category_id)
+        if item:
+            await self.db.delete(item)
+            await self.db.commit()
+            return True
+        return False
+

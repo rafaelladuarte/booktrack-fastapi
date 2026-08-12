@@ -22,3 +22,7 @@ class CategoryCreate(BaseModel):
 
 class CategoryParentFilter(BaseModel):
     parent_id: Optional[int] = None
+
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None
+    parent_id: Optional[int] = None
