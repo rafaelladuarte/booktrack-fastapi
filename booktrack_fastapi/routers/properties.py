@@ -12,6 +12,7 @@ from booktrack_fastapi.models.shelves import Shelves
 from booktrack_fastapi.models.tags import Tags
 from booktrack_fastapi.repositories.properties_repo import PropertiesRepository
 from booktrack_fastapi.schemas.properties import (
+    Property,
     PropertyCreate,
     PropertyList,
 )
@@ -32,17 +33,17 @@ async def list_collections(
     return {'data': items}
 
 
-@router.post('/collections', response_model=PropertyCreate, status_code=HTTPStatus.CREATED)
+@router.post('/collections', response_model=Property, status_code=HTTPStatus.CREATED)
 @limiter.limit('30/minute')
 async def create_collection(
     request: Request,
-    name: str,
+    data: PropertyCreate,
     db: SessionDep,
     current_user: AdminUser,
 ):
     service = PropertiesService(db=db, model=Collections, repository_cls=PropertiesRepository)
-    await service.create(name=name)
-    return {'detail': 'Collection created successfully!'}
+    obj = await service.create(name=data.name)
+    return obj
 
 
 @router.get('/publishers', response_model=PropertyList, status_code=HTTPStatus.OK)
@@ -57,17 +58,17 @@ async def list_publisher(
     return {'data': items}
 
 
-@router.post('/publishers', status_code=HTTPStatus.CREATED)
+@router.post('/publishers', response_model=Property, status_code=HTTPStatus.CREATED)
 @limiter.limit('30/minute')
 async def create_publisher(
     request: Request,
-    name: str,
+    data: PropertyCreate,
     db: SessionDep,
     current_user: AdminUser,
 ):
     service = PropertiesService(db=db, model=Publishers, repository_cls=PropertiesRepository)
-    await service.create(name=name)
-    return {'detail': 'Publisher created successfully!'}
+    obj = await service.create(name=data.name)
+    return obj
 
 
 @router.get('/tags', response_model=PropertyList, status_code=HTTPStatus.OK)

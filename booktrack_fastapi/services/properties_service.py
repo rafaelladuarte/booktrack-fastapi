@@ -36,9 +36,9 @@ class PropertiesService:
                 status_code=409, detail=f"{self.model.__name__} '{name}' já existe."
             )
 
-        await self.repo.create(name)
+        obj = await self.repo.create(name)
 
-        return True
+        return obj
 
     async def list_all(self):
         """Lista todos os registros da entidade gerenciada.
