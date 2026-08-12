@@ -121,15 +121,20 @@ class BooksRepository:
         if filters.get('author_id'):
             conditions.append(Books.author_id == filters['author_id'])
 
-        needs_authors_join = any(filters.get(k) for k in ('author_name', 'author_country', 'author_gender'))
+        needs_authors_join = any(filters.get(k) for k in ('author_name', 'author_country', 'author_gender', 'q'))
         if needs_authors_join:
-            stmt = stmt.join(Authors, Books.author_id == Authors.id)
+            stmt = stmt.outerjoin(Authors, Books.author_id == Authors.id)
             if filters.get('author_name'):
                 conditions.append(Authors.name.ilike(f'%{filters["author_name"]}%'))
             if filters.get('author_country'):
                 conditions.append(Authors.country_of_origin.ilike(filters['author_country']))
             if filters.get('author_gender'):
                 conditions.append(Authors.gender == filters['author_gender'])
+
+        if filters.get('q'):
+            from sqlalchemy import or_
+            q_term = f'%{filters["q"]}%'
+            conditions.append(or_(Books.title.ilike(q_term), Authors.name.ilike(q_term)))
 
         if filters.get('category_id'):
             descendant_ids = await self._get_descendant_category_ids(filters['category_id'])
