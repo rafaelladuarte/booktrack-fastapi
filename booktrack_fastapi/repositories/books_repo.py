@@ -208,7 +208,7 @@ class BooksRepository:
         return True
 
     async def delete_by_id(self, book_id: int):
-        """Remove permanentemente um livro do banco de dados.
+        """Remove permanentemente um livro do banco de dados e suas dependências.
 
         Args:
             book_id: ID do livro a ser deletado.
@@ -216,6 +216,23 @@ class BooksRepository:
         Returns:
             True se a operação foi executada.
         """
+        # Deletar das tabelas de associação do livro
+        from booktrack_fastapi.models.associations import books_authors, books_categories, readings_tags, readings_shelves
+        await self.db.execute(delete(books_authors).where(books_authors.c.book_id == book_id))
+        await self.db.execute(delete(books_categories).where(books_categories.c.book_id == book_id))
+
+        # Obter leituras
+        stmt_readings = select(Readings.id).where(Readings.book_id == book_id)
+        result = await self.db.execute(stmt_readings)
+        reading_ids = result.scalars().all()
+
+        if reading_ids:
+            # Remover associações de tags e prateleiras
+            await self.db.execute(delete(readings_tags).where(readings_tags.c.reading_id.in_(reading_ids)))
+            await self.db.execute(delete(readings_shelves).where(readings_shelves.c.reading_id.in_(reading_ids)))
+            # Remover leituras
+            await self.db.execute(delete(Readings).where(Readings.book_id == book_id))
+
         stmt = delete(Books).where(Books.id == book_id)
         await self.db.execute(stmt)
         await self.db.commit()

@@ -56,7 +56,7 @@ async def create_book(
     request: Request,
     data: BookCreate,
     db: SessionDep,
-    current_user: AdminUser,
+    current_user: CurrentUser,
 ):
     service = BooksService(db)
     await service.create(data=data)
@@ -70,7 +70,7 @@ async def update_book(
     book_id: int,
     data: BookUpdate,
     db: SessionDep,
-    current_user: AdminUser,
+    current_user: CurrentUser,
 ):
     service = BooksService(db)
     await service.update_by_id(book_id, data)
@@ -83,7 +83,7 @@ async def delete_book_by_id(
     request: Request,
     book_id: int,
     db: SessionDep,
-    current_user: AdminUser,
+    current_user: CurrentUser,
 ):
     service = BooksService(db)
     await service.delete_by_id(book_id)
