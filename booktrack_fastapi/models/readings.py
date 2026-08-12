@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from booktrack_fastapi.models.associations import (
@@ -28,6 +28,7 @@ class Readings(Base):
     personal_goal: Mapped[str | None] = mapped_column(String(255))
     club_date: Mapped[datetime.date | None] = mapped_column(Date)
     club_name: Mapped[str | None] = mapped_column(String(255))
+    review: Mapped[str | None] = mapped_column(Text)
 
     book: Mapped['Books'] = relationship(back_populates='readings')  # noqa: F821
     status: Mapped['ReadingStatus'] = relationship(back_populates='readings')  # noqa: F821

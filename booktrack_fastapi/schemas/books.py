@@ -17,6 +17,7 @@ class Book(BaseModel):
     author_id: Optional[int] = None
     category_id: Optional[int] = None
     cover_url: Optional[str]
+    synopsis: Optional[str] = None
 
 
 class BookCreate(BaseModel):
@@ -29,6 +30,7 @@ class BookCreate(BaseModel):
     author_id: Optional[int] = None
     category_id: Optional[int] = None
     cover_url: Optional[str] = None
+    synopsis: Optional[str] = None
 
 
 class BookList(BaseModel):
@@ -42,6 +44,7 @@ class BookUpdate(BaseModel):
     author_id: Optional[int] = Field(None, description='Atualizar ID do escritor')
     category_id: Optional[int] = Field(None, description='Atualizar ID da categoria')
     cover_url: Optional[str] = Field(None, description='Atualizar URL da capa')
+    synopsis: Optional[str] = Field(None, description='Atualizar sinopse')
     title: Optional[str] = Field(None, description='Atualizar título')
     original_publication_year: Optional[int] = Field(
         None, description='Atualizar ano de publicação original'
@@ -106,6 +109,7 @@ class BookExpanded(BaseModel):
     original_publication_year: Optional[int] = None
     total_pages: Optional[int] = None
     cover_url: Optional[str] = None
+    synopsis: Optional[str] = None
 
     author: Optional[AuthorSchema] = None
     publisher: Optional[PublisherSchema] = None
@@ -130,6 +134,7 @@ class ReadingSimple(BaseModel):
     start_date: Optional[date] = None
     end_date: Optional[date] = None
     pages_read: Optional[int] = None
+    review: Optional[str] = None
     status: Optional[ReadingStatusSimple] = None
     tags: list[str] = []
     shelves: list[str] = []

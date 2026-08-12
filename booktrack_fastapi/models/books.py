@@ -24,6 +24,7 @@ class Books(Base):
     original_publication_year: Mapped[int | None]
     total_pages: Mapped[int | None]
     cover_url: Mapped[str | None] = mapped_column(Text)
+    synopsis: Mapped[str | None] = mapped_column(Text)
 
     publisher: Mapped['Publishers'] = relationship(  # noqa: F821
         back_populates='books'
