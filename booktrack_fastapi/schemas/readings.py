@@ -23,6 +23,7 @@ class ReadingExpanded(BaseModel):
     club_name: Optional[str] = None
     updated_at: Optional[datetime] = None
     review: Optional[str] = None
+    rating: Optional[int] = Field(None, ge=1, le=5)
 
     status: Optional[ReadingStatusSchema] = None
 
@@ -57,6 +58,7 @@ class ReadingUpdate(BaseModel):
     club_date: Optional[date] = Field(None, description='Atualizar data do Clube do Livro')
     start_date: Optional[date] = Field(None, description='Atualizar data de início')
     review: Optional[str] = Field(None, description='Atualizar resenha')
+    rating: Optional[int] = Field(None, ge=1, le=5, description='Atualizar nota (1 a 5)')
     tag_ids: Optional[list[int]] = Field(None, description='Atualizar IDs das tags associadas')
     shelf_ids: Optional[list[int]] = Field(None, description='Atualizar IDs das estantes associadas')
 
@@ -71,3 +73,4 @@ class ReadingCreate(BaseModel):
     club_date: Optional[date] = None
     club_name: Optional[str] = None
     review: Optional[str] = None
+    rating: Optional[int] = Field(None, ge=1, le=5)

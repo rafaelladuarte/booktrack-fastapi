@@ -135,6 +135,7 @@ class ReadingSimple(BaseModel):
     end_date: Optional[date] = None
     pages_read: Optional[int] = None
     review: Optional[str] = None
+    rating: Optional[int] = None
     status: Optional[ReadingStatusSimple] = None
     tags: list[str] = []
     shelves: list[str] = []

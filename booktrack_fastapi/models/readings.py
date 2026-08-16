@@ -29,6 +29,7 @@ class Readings(Base):
     club_date: Mapped[datetime.date | None] = mapped_column(Date)
     club_name: Mapped[str | None] = mapped_column(String(255))
     review: Mapped[str | None] = mapped_column(Text)
+    rating: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     book: Mapped['Books'] = relationship(back_populates='readings')  # noqa: F821
     status: Mapped['ReadingStatus'] = relationship(back_populates='readings')  # noqa: F821
