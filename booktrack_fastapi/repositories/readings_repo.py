@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from booktrack_fastapi.models.books import Books
+from booktrack_fastapi.models.reading_quotes import ReadingQuotes  # noqa: F401
 from booktrack_fastapi.models.readings import Readings
 
 
@@ -11,7 +12,7 @@ class ReadingsRepository:
         self.db = db
 
     async def get_all(self):
-        """Lista todas as leituras com carregamento de livro, status, tags e estantes.
+        """Lista todas as leituras com carregamento de livro, status, tags, estantes e citações.
 
         Returns:
             Lista de instâncias de Readings.
@@ -20,6 +21,7 @@ class ReadingsRepository:
             selectinload(Readings.status),
             selectinload(Readings.tags),
             selectinload(Readings.shelves),
+            selectinload(Readings.quotes),
             selectinload(Readings.book).options(
                 selectinload(Books.author),
                 selectinload(Books.publisher),
@@ -47,6 +49,7 @@ class ReadingsRepository:
                 selectinload(Readings.status),
                 selectinload(Readings.tags),
                 selectinload(Readings.shelves),
+                selectinload(Readings.quotes),
                 selectinload(Readings.book).options(
                     selectinload(Books.author),
                     selectinload(Books.publisher),
@@ -75,6 +78,7 @@ class ReadingsRepository:
                 selectinload(Readings.status),
                 selectinload(Readings.tags),
                 selectinload(Readings.shelves),
+                selectinload(Readings.quotes),
                 selectinload(Readings.book).options(
                     selectinload(Books.author),
                     selectinload(Books.publisher),
@@ -118,6 +122,7 @@ class ReadingsRepository:
             selectinload(Readings.status),
             selectinload(Readings.tags),
             selectinload(Readings.shelves),
+            selectinload(Readings.quotes),
             selectinload(Readings.book).options(
                 selectinload(Books.author),
                 selectinload(Books.publisher),

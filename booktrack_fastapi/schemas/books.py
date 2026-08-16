@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from booktrack_fastapi.schemas.quotes import QuoteSchema
+
 
 class Book(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -139,16 +141,15 @@ class ReadingSimple(BaseModel):
     status: Optional[ReadingStatusSimple] = None
     tags: list[str] = []
     shelves: list[str] = []
-    
+    quotes: list[QuoteSchema] = []
+
     @field_validator('tags', 'shelves', mode='before')
     @classmethod
     def validate_tags_shelves(cls, v):
         if isinstance(v, list):
             return [getattr(item, 'name', str(item)) for item in v]
         return v
-    
-    # Need to import field_validator for this, we'll do it cleanly without field_validator if possible,
-    # or just add the import at the top. Let's add the import to the top of the file in another chunk.
+
 
 
 class BookDetail(BookExpanded):

@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,6 +12,9 @@ from booktrack_fastapi.models.associations import (
 )
 
 from .base import Base
+
+if TYPE_CHECKING:
+    from booktrack_fastapi.models.reading_quotes import ReadingQuotes
 
 
 class Readings(Base):
@@ -40,4 +46,8 @@ class Readings(Base):
 
     shelves: Mapped[list['Shelves']] = relationship(  # noqa: F821
         secondary=readings_shelves, back_populates='readings'
+    )
+
+    quotes: Mapped[list[ReadingQuotes]] = relationship(
+        back_populates='reading', cascade='all, delete-orphan'
     )

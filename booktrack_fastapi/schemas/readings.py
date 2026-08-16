@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from booktrack_fastapi.schemas.books import BookExpanded
+from booktrack_fastapi.schemas.quotes import QuoteSchema
 
 
 class ReadingStatusSchema(BaseModel):
@@ -32,6 +33,7 @@ class ReadingExpanded(BaseModel):
 
     tags: list[str] = []
     shelves: list[str] = []
+    quotes: list[QuoteSchema] = []
 
     @field_validator('tags', 'shelves', mode='before')
     @classmethod

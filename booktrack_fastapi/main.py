@@ -12,6 +12,7 @@ from booktrack_fastapi.routers import (
     categories,
     health,
     properties,
+    quotes,
     readings,
 )
 
@@ -48,3 +49,4 @@ app.include_router(categories.router)
 app.include_router(authors.router)
 app.include_router(books.router)
 app.include_router(readings.router)
+app.include_router(quotes.router)

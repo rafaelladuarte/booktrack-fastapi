@@ -50,6 +50,7 @@ class BooksRepository:
                 selectinload(Books.readings).selectinload(Readings.status),
                 selectinload(Books.readings).selectinload(Readings.tags),
                 selectinload(Books.readings).selectinload(Readings.shelves),
+                selectinload(Books.readings).selectinload(Readings.quotes),
             )
         )
         result = await self.db.scalars(stmt)

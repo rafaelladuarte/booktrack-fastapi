@@ -34,6 +34,7 @@ from booktrack_fastapi.models import (
     Shelves,
     Tags,
 )
+from booktrack_fastapi.models.reading_quotes import ReadingQuotes  # noqa: F401
 
 # Combine metadata from both registries
 target_metadata = [Base.metadata, table_registry.metadata]
