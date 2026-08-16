@@ -41,7 +41,7 @@ class BooksService:
             )
 
         title = data.title.strip()
-        min_length = 10
+        min_length = 1
 
         if len(title) < min_length:
             raise HTTPException(

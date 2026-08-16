@@ -188,6 +188,7 @@ class BooksRepository:
             author_id=parameters.get('author_id'),
             category_id=parameters.get('category_id'),
             cover_url=parameters.get('cover_url'),
+            synopsis=parameters.get('synopsis'),
         )
         self.db.add(item)
         await self.db.commit()
