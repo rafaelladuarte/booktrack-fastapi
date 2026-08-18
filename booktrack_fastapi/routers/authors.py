@@ -65,6 +65,12 @@ async def create_author(
     repo: AuthorsRepo,
     current_user: AdminUser,
 ):
+    existing = await repo.get_by_name(data.name.strip())
+    if existing:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT, 
+            detail=f"Autor '{data.name.strip()}' já existe no acervo."
+        )
     return await repo.create(data.model_dump())
 
 

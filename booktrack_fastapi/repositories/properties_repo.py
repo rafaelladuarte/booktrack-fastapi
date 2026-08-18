@@ -54,7 +54,7 @@ class PropertiesRepository:
         # Alternative: return await self.db.get(self.model, propertie_id)
 
     async def get_by_name(self, name: str):
-        """Busca um registro pelo campo nome exato.
+        """Busca um registro pelo campo nome exato (case-insensitive).
 
         Args:
             name: Nome a ser pesquisado.
@@ -62,6 +62,6 @@ class PropertiesRepository:
         Returns:
             O objeto encontrado ou None.
         """
-        stmt = select(self.model).where(self.model.name == name)
+        stmt = select(self.model).where(self.model.name.ilike(name))
         result = await self.db.scalars(stmt)
         return result.first()

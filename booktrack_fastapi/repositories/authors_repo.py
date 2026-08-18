@@ -29,6 +29,12 @@ class AuthorsRepository:
         """
         return await self.db.get(Authors, author_id)
 
+    async def get_by_name(self, name: str):
+        """Busca um autor pelo nome exato (case-insensitive)."""
+        stmt = select(Authors).where(Authors.name.ilike(name))
+        result = await self.db.scalars(stmt)
+        return result.first()
+
     async def create(self, parameters: dict):
         """Persiste um novo autor no banco de dados.
 
