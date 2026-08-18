@@ -58,6 +58,9 @@ services:
       redis:
         condition: service_healthy
     restart: on-failure
+    volumes:
+      # Bind mount do código-fonte para hot reload sem precisar rebuildar a imagem
+      - ./booktrack_fastapi:/app/booktrack_fastapi
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
       interval: 10s

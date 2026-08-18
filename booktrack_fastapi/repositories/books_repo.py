@@ -79,6 +79,10 @@ class BooksRepository:
         needs_readings_join = any(filters.get(k) for k in ('shelve_id', 'tag_id', 'status_id'))
         if needs_readings_join:
             stmt = stmt.join(Readings, Readings.book_id == Books.id)
+            # Garante que os dados das leituras e seus status sejam retornados no resultado
+            stmt = stmt.options(
+                selectinload(Books.readings).selectinload(Readings.status)
+            )
 
         if filters.get('shelve_id'):
             stmt = (
