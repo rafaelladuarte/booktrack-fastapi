@@ -251,7 +251,18 @@ booktrack_api/
 
 ```mermaid
 erDiagram
-    %% ========== 1. BASIC DIMENSIONS ==========
+    %% ========== 1. USERS ==========
+    USERS {
+        int id PK
+        varchar username UK
+        varchar email UK
+        varchar password
+        varchar role "admin/viewer"
+        datetime created_at
+        datetime updated_at
+    }
+
+    %% ========== 2. BASIC DIMENSIONS ==========
     AUTHORS {
         int id PK
         varchar name
@@ -289,52 +300,64 @@ erDiagram
         varchar name UK
     }
 
-    %% ========== 2. HIERARCHICAL CATEGORIES ==========
+    %% ========== 3. HIERARCHICAL CATEGORIES ==========
     CATEGORIES {
         int id PK
         varchar name
         int parent_id FK "NULL = root category"
     }
 
-    %% ========== 3. BOOKS ==========
+    %% ========== 4. BOOKS ==========
     BOOKS {
         int id PK
         int publisher_id FK
         int collection_id FK
         int format_id FK
         int category_id FK 
-        int authors FK
+        int author_id FK
         varchar title
         int original_publication_year
         int total_pages
         text cover_url
-        
+        text synopsis
     }
 
-    %% ========== 5. READINGS ==========
+    %% ========== 5. READINGS & QUOTES ==========
     READINGS {
         int id PK
         int book_id FK
         int status_id FK
+        datetime updated_at
         date start_date
         date end_date
         int pages_read
         varchar personal_goal
         date club_date
         varchar club_name
+        text review
+        int rating
+    }
+
+    READING_QUOTES {
+        int id PK
+        int reading_id FK
+        text content
+        int page_number
+        datetime created_at
     }
 
     %% ========== RELATIONSHIPS ==========
     PUBLISHERS ||--o{ BOOKS : "publishes"
     COLLECTIONS ||--o{ BOOKS : "contains"
     FORMATS ||--o{ BOOKS : "has"
-    BOOKS }o--o{ AUTHORS : "written by"
-    BOOKS }o--o{ CATEGORIES : "classified as"
+    AUTHORS ||--o{ BOOKS : "written by"
+    CATEGORIES ||--o{ BOOKS : "classified as"
     CATEGORIES }o--o{ CATEGORIES : "sub-category of"
     BOOKS ||--o{ READINGS : "has readings"
     READING_STATUS ||--o{ READINGS : "defines"
     READINGS }o--o{ TAGS : "tagged with"
     READINGS }o--o{ SHELVES : "stored in"
+    READINGS ||--o{ READING_QUOTES : "has quotes"
 ```
 
 ---
