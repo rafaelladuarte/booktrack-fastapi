@@ -171,7 +171,9 @@ async def get_current_user(
     if token in _USER_CACHE:
         cached_time, cached_user = _USER_CACHE[token]
         if current_time - cached_time < CACHE_TTL:
-            return User(id=cached_user.id, email=cached_user.email, role=cached_user.role, password="", username="")
+            fake_user = User(email=cached_user.email, role=cached_user.role, password="", username="")
+            fake_user.id = cached_user.id
+            return fake_user
         else:
             del _USER_CACHE[token]
 
