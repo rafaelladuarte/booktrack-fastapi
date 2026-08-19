@@ -164,7 +164,11 @@ class ReadingsRepository:
         Returns:
             A instância de Readings atualizada.
         """
-        reading = await self.get_by_book_id(book_id)
+        stmt = select(Readings).where(Readings.book_id == book_id).options(
+            selectinload(Readings.tags),
+            selectinload(Readings.shelves)
+        )
+        reading = (await self.db.scalars(stmt)).first()
         if not reading:
             return None
 
@@ -172,8 +176,8 @@ class ReadingsRepository:
         shelf_ids = parameters.pop('shelf_ids', None)
 
         if parameters:
-            stmt = update(Readings).where(Readings.book_id == book_id).values(**parameters)
-            await self.db.execute(stmt)
+            stmt_update = update(Readings).where(Readings.book_id == book_id).values(**parameters)
+            await self.db.execute(stmt_update)
 
         if tag_ids is not None:
             if tag_ids:
@@ -200,4 +204,4 @@ class ReadingsRepository:
         await self.db.commit()
 
         # Helper to get fresh object
-        return await self.get_by_book_id(book_id)
+        return reading

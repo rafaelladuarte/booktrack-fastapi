@@ -124,6 +124,18 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
+import time
+from dataclasses import dataclass
+
+@dataclass
+class CachedUser:
+    id: int
+    email: str
+    role: str
+
+_USER_CACHE: dict[str, tuple[float, CachedUser]] = {}
+CACHE_TTL = 300  # 5 minutos
+
 # OAuth2 scheme para extração do token do header Authorization
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 
@@ -155,6 +167,14 @@ async def get_current_user(
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
+    current_time = time.time()
+    if token in _USER_CACHE:
+        cached_time, cached_user = _USER_CACHE[token]
+        if current_time - cached_time < CACHE_TTL:
+            return User(id=cached_user.id, email=cached_user.email, role=cached_user.role, password="", username="")
+        else:
+            del _USER_CACHE[token]
+
     user = await session.scalar(select(User).where(User.email == subject_email))
 
     if not user:
@@ -164,4 +184,5 @@ async def get_current_user(
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
+    _USER_CACHE[token] = (current_time, CachedUser(id=user.id, email=user.email, role=user.role))
     return user
