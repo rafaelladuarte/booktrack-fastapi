@@ -1,7 +1,7 @@
 # BookTrack API – Gerenciamento de Livros com FastAPI 
 
 [![Python](https://img.shields.io/badge/Python-3.13-yellow?logo=python&logoColor=white)](https://www.python.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-3.9-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.121.0-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -45,11 +45,11 @@ graph TB
 
     subgraph "💾 Data Layer"
         direction LR
-        PostgreSQL[(PostgreSQL 16<br/>Star Schema)]
-        Redis[(Redis<br/>Cache + Rate Limit*)]
+        PostgreSQL[(PostgreSQL 18<br/>Star Schema)]
+        Redis[(Redis<br/>Cache + Rate Limit)]
     end
 
-    subgraph "📦 External"
+    subgraph "📦 External*"
         CSV[CSV Import]
     end
 
@@ -67,15 +67,12 @@ graph TB
     %% Styles
     style API fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#fff
     style PostgreSQL fill:#336791,stroke:#1F496E,stroke-width:2px,color:#fff
-    style Redis fill:#DC382D,stroke:#A41E11,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+    style Redis fill:#DC382D,stroke:#A41E11,stroke-width:2px,color:#fff
     style Auth fill:#FF9800,stroke:#E65100,stroke-width:1px,color:#fff
     style RBAC fill:#FF9800,stroke:#E65100,stroke-width:1px,color:#fff
     style Service fill:#9C27B0,stroke:#6A1B9A,stroke-width:1px,color:#fff
     style Repo fill:#9C27B0,stroke:#6A1B9A,stroke-width:1px,color:#fff
 ```
-
-> *Redis será implementado futuramente para rate limiting e cache*
-
 ---
 
 ## 🔄 Fluxo da API
@@ -365,9 +362,9 @@ erDiagram
 ## 📖 Documentação Adicional
 
 - [Fluxo completo de autenticação](docs/auth-flow.md)
-- [Cache com Redis (futuro)](docs/caching-strategy.md)
+- [Estratégia de Cache e Rate Limit](docs/caching-strategy.md)
 - [Importação CSV](docs/csv-import.md)
-- [Swagger UI](https://seu-projeto.onrender.com/docs) *(disponível após deploy)*
+- [Swagger UI API](https://booktrack-backend-gzra.onrender.com/docs) *(Documentação Oficial em Produção)*
 
 ---
 
@@ -404,6 +401,7 @@ uvicorn booktrack_fastapi.main:app --reload
 | Python | 3.13 | Linguagem principal |
 | FastAPI | 0.121.0 | Framework web |
 | PostgreSQL | 16 | Banco de dados relacional |
+| Redis | 7 | Banco em memória (Rate Limit) |
 | SQLAlchemy | 2.0.44 | ORM |
 | Alembic | 1.17.1 | Migrações |
 | Docker | 3.9 | Containerização |
