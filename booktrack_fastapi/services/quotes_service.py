@@ -16,6 +16,10 @@ class QuotesService:
         self.repo = QuotesRepository(db)
         self.readings_repo = ReadingsRepository(db)
 
+    async def list_by_reading(self, reading_id: int, limit: int = 10, offset: int = 0):
+        """Retorna as citações de uma leitura paginadas."""
+        return await self.repo.get_by_reading_id(reading_id, limit, offset)
+
     async def create(self, reading_id: int, data: QuoteCreate):
         """Valida a leitura e cria a nova citação.
 

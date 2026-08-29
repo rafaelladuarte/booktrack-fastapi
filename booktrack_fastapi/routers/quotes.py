@@ -4,10 +4,27 @@ from fastapi import APIRouter, Request
 
 from booktrack_fastapi.core.dependencies import AdminUser, SessionDep
 from booktrack_fastapi.core.rate_limit import limiter
-from booktrack_fastapi.schemas.quotes import QuoteCreate, QuoteSchema
+from booktrack_fastapi.schemas.quotes import QuoteCreate, QuoteSchema, QuoteList
 from booktrack_fastapi.services.quotes_service import QuotesService
+from fastapi import Query
 
 router = APIRouter(prefix='/quotes', tags=['Quotes'])
+
+
+@router.get('/{reading_id}', response_model=QuoteList, status_code=HTTPStatus.OK)
+@limiter.limit('60/minute')
+async def list_quotes(
+    request: Request,
+    reading_id: int,
+    db: SessionDep,
+    current_user: AdminUser,
+    limit: int = Query(10, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
+    """Lista citações de uma leitura de forma paginada."""
+    service = QuotesService(db)
+    quotes = await service.list_by_reading(reading_id=reading_id, limit=limit, offset=offset)
+    return {'data': quotes}
 
 
 @router.post('/{reading_id}', response_model=QuoteSchema, status_code=HTTPStatus.CREATED)

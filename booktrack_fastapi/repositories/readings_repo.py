@@ -21,7 +21,6 @@ class ReadingsRepository:
             selectinload(Readings.status),
             selectinload(Readings.tags),
             selectinload(Readings.shelves),
-            selectinload(Readings.quotes),
             selectinload(Readings.book).options(
                 selectinload(Books.author),
                 selectinload(Books.publisher),
@@ -49,7 +48,6 @@ class ReadingsRepository:
                 selectinload(Readings.status),
                 selectinload(Readings.tags),
                 selectinload(Readings.shelves),
-                selectinload(Readings.quotes),
                 selectinload(Readings.book).options(
                     selectinload(Books.author),
                     selectinload(Books.publisher),
@@ -78,7 +76,6 @@ class ReadingsRepository:
                 selectinload(Readings.status),
                 selectinload(Readings.tags),
                 selectinload(Readings.shelves),
-                selectinload(Readings.quotes),
                 selectinload(Readings.book).options(
                     selectinload(Books.author),
                     selectinload(Books.publisher),
@@ -122,7 +119,6 @@ class ReadingsRepository:
             selectinload(Readings.status),
             selectinload(Readings.tags),
             selectinload(Readings.shelves),
-            selectinload(Readings.quotes),
             selectinload(Readings.book).options(
                 selectinload(Books.author),
                 selectinload(Books.publisher),

@@ -10,11 +10,13 @@ class QuotesRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_by_reading_id(self, reading_id: int) -> list[ReadingQuotes]:
-        """Lista todas as citações de uma leitura em ordem cronológica.
+    async def get_by_reading_id(self, reading_id: int, limit: int = 100, offset: int = 0) -> list[ReadingQuotes]:
+        """Lista as citações de uma leitura paginadas, mais recentes primeiro.
 
         Args:
             reading_id: ID da leitura pai.
+            limit: Limite de registros.
+            offset: Deslocamento.
 
         Returns:
             Lista de instâncias de ReadingQuotes ordenadas por data de criação.
@@ -22,7 +24,9 @@ class QuotesRepository:
         stmt = (
             select(ReadingQuotes)
             .where(ReadingQuotes.reading_id == reading_id)
-            .order_by(ReadingQuotes.created_at.asc())
+            .order_by(ReadingQuotes.created_at.desc())
+            .offset(offset)
+            .limit(limit)
         )
         result = await self.db.scalars(stmt)
         return list(result.all())

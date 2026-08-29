@@ -4,7 +4,8 @@ import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, column_property
+from sqlalchemy import select, func
 
 from booktrack_fastapi.models.associations import (
     readings_shelves,
@@ -12,10 +13,7 @@ from booktrack_fastapi.models.associations import (
 )
 
 from .base import Base
-
-if TYPE_CHECKING:
-    from booktrack_fastapi.models.reading_quotes import ReadingQuotes
-
+from booktrack_fastapi.models.reading_quotes import ReadingQuotes
 
 class Readings(Base):
     __tablename__ = 'readings'
@@ -50,4 +48,12 @@ class Readings(Base):
 
     quotes: Mapped[list[ReadingQuotes]] = relationship(
         back_populates='reading', cascade='all, delete-orphan'
+    )
+
+    quotes_count: Mapped[int] = column_property(
+        select(func.count(ReadingQuotes.id))
+        .where(ReadingQuotes.reading_id == id)
+        .correlate_except(ReadingQuotes)
+        .scalar_subquery(),
+        deferred=False
     )

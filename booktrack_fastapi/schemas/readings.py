@@ -33,7 +33,7 @@ class ReadingExpanded(BaseModel):
 
     tags: list[str] = []
     shelves: list[str] = []
-    quotes: list[QuoteSchema] = []
+    quotes_count: int = 0
 
     @field_validator('tags', 'shelves', mode='before')
     @classmethod
