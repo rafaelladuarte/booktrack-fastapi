@@ -23,21 +23,18 @@ ENV PYTHONPATH=/app
 
 WORKDIR /app
 
-# Copia as dependências instaladas do stage builder
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Copia o código da aplicação, arquivos de migração e scripts
 COPY booktrack_fastapi ./booktrack_fastapi
 COPY migrations ./migrations
 COPY scripts ./scripts
 COPY alembic.ini .
 
-# Cria usuário não-root por segurança
 RUN adduser --disabled-password --gecos '' booktrack
 RUN chown -R booktrack:booktrack /app
 USER booktrack
 
 EXPOSE 8000
 
-CMD ["uvicorn", "booktrack_fastapi.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+CMD ["sh", "-c", "uvicorn booktrack_fastapi.main:app --host 0.0.0.0 --port $PORT --workers 1"]
